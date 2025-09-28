@@ -1,0 +1,928 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* technical_service
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-09-21 10:00:00\n"
+"PO-Revision-Date: 2024-09-21 10:00:00\n"
+"Last-Translator: \n"
+"Language-Team: Turkish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: tr\n"
+
+#. module: technical_service
+#: model:ir.module.module,name:technical_service.module_technical_service
+msgid "Technical Service Management"
+msgstr "Teknik Servis Yönetimi"
+
+#. module: technical_service
+#: model:ir.module.module,summary:technical_service.module_technical_service
+msgid "Manage technical services, work orders, and maintenance requests"
+msgstr "Teknik servisler, iş emirleri ve bakım taleplerini yönetin"
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_technical_service_root
+msgid "Technical Service"
+msgstr "Teknik Servis"
+
+# ========== MENUS ==========
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_service_management
+msgid "Service Management"
+msgstr "Servis Yönetimi"
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_service_request
+msgid "Service Requests"
+msgstr "Servis Talepleri"
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_work_order
+msgid "Work Orders"
+msgstr "İş Emirleri"
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_asset_management
+msgid "Asset Management"
+msgstr "Varlık Yönetimi"
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_asset
+msgid "Assets/Equipment"
+msgstr "Varlıklar/Ekipmanlar"
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_maintenance_contract
+msgid "Maintenance Contracts"
+msgstr "Bakım Sözleşmeleri"
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_configuration
+msgid "Configuration"
+msgstr "Yapılandırma"
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_campus
+msgid "Campuses"
+msgstr "Kampüsler"
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_building
+msgid "Buildings"
+msgstr "Binalar"
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_sla_policy
+msgid "SLA Policies"
+msgstr "SLA Politikaları"
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_service_team
+msgid "Service Teams"
+msgstr "Servis Ekipleri"
+
+# ========== SERVICE REQUEST FIELDS ==========
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_request_number
+msgid "Request Number"
+msgstr "Talep Numarası"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_request_type
+msgid "Request Type"
+msgstr "Talep Türü"
+
+#. module: technical_service
+#: selection:maintenance.request,x_request_type:0
+msgid "Incident"
+msgstr "Olay"
+
+#. module: technical_service
+#: selection:maintenance.request,x_request_type:0
+msgid "Service Request"
+msgstr "Servis Talebi"
+
+#. module: technical_service
+#: selection:maintenance.request,x_request_type:0
+msgid "Problem"
+msgstr "Problem"
+
+#. module: technical_service
+#: selection:maintenance.request,x_request_type:0
+msgid "Change Request"
+msgstr "Değişiklik Talebi"
+
+#. module: technical_service
+#: selection:maintenance.request,x_request_type:0
+msgid "Preventive Maintenance"
+msgstr "Önleyici Bakım"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_service_category
+msgid "Service Category"
+msgstr "Servis Kategorisi"
+
+#. module: technical_service
+#: selection:maintenance.request,x_service_category:0
+msgid "IT - Hardware"
+msgstr "BT - Donanım"
+
+#. module: technical_service
+#: selection:maintenance.request,x_service_category:0
+msgid "IT - Software"
+msgstr "BT - Yazılım"
+
+#. module: technical_service
+#: selection:maintenance.request,x_service_category:0
+msgid "IT - Network"
+msgstr "BT - Ağ"
+
+#. module: technical_service
+#: selection:maintenance.request,x_service_category:0
+msgid "Facility"
+msgstr "Tesis"
+
+#. module: technical_service
+#: selection:maintenance.request,x_service_category:0
+msgid "Production Equipment"
+msgstr "Üretim Ekipmanı"
+
+#. module: technical_service
+#: selection:maintenance.request,x_service_category:0
+msgid "Office Equipment"
+msgstr "Ofis Ekipmanı"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_impact
+msgid "Impact"
+msgstr "Etki"
+
+#. module: technical_service
+#: selection:maintenance.request,x_impact:0
+msgid "Critical"
+msgstr "Kritik"
+
+#. module: technical_service
+#: selection:maintenance.request,x_impact:0
+msgid "High"
+msgstr "Yüksek"
+
+#. module: technical_service
+#: selection:maintenance.request,x_impact:0
+msgid "Medium"
+msgstr "Orta"
+
+#. module: technical_service
+#: selection:maintenance.request,x_impact:0
+msgid "Low"
+msgstr "Düşük"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_urgency
+msgid "Urgency"
+msgstr "Aciliyet"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_priority_level
+msgid "Priority Level"
+msgstr "Öncelik Seviyesi"
+
+#. module: technical_service
+#: selection:maintenance.request,x_priority_level:0
+msgid "P1 - Critical"
+msgstr "P1 - Kritik"
+
+#. module: technical_service
+#: selection:maintenance.request,x_priority_level:0
+msgid "P2 - High"
+msgstr "P2 - Yüksek"
+
+#. module: technical_service
+#: selection:maintenance.request,x_priority_level:0
+msgid "P3 - Medium"
+msgstr "P3 - Orta"
+
+#. module: technical_service
+#: selection:maintenance.request,x_priority_level:0
+msgid "P4 - Low"
+msgstr "P4 - Düşük"
+
+# ========== LOCATION FIELDS ==========
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_campus_id
+msgid "Campus"
+msgstr "Kampüs"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_building_id
+msgid "Building"
+msgstr "Bina"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_floor
+msgid "Floor"
+msgstr "Kat"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_room
+msgid "Room"
+msgstr "Oda"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_location_details
+msgid "Location Details"
+msgstr "Konum Detayları"
+
+# ========== SLA FIELDS ==========
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_sla_id
+msgid "SLA Policy"
+msgstr "SLA Politikası"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_response_deadline
+msgid "Response Deadline"
+msgstr "Yanıt Süresi"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_resolution_deadline
+msgid "Resolution Deadline"
+msgstr "Çözüm Süresi"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_response_time
+msgid "Actual Response Time"
+msgstr "Gerçek Yanıt Süresi"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_resolution_time
+msgid "Actual Resolution Time"
+msgstr "Gerçek Çözüm Süresi"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_sla_status
+msgid "SLA Status"
+msgstr "SLA Durumu"
+
+#. module: technical_service
+#: selection:maintenance.request,x_sla_status:0
+msgid "On Track"
+msgstr "Yolunda"
+
+#. module: technical_service
+#: selection:maintenance.request,x_sla_status:0
+msgid "At Risk"
+msgstr "Risk Altında"
+
+#. module: technical_service
+#: selection:maintenance.request,x_sla_status:0
+msgid "Breached"
+msgstr "İhlal Edildi"
+
+# ========== WORK ORDER FIELDS ==========
+
+#. module: technical_service
+#: model:ir.model,name:technical_service.model_technical_service_work_order
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_work_order_ids
+msgid "Work Orders"
+msgstr "İş Emirleri"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order__name
+msgid "Title"
+msgstr "Başlık"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order__x_request_id
+msgid "Service Request"
+msgstr "Servis Talebi"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order__x_work_type
+msgid "Work Type"
+msgstr "İş Türü"
+
+#. module: technical_service
+#: selection:technical_service.work_order,x_work_type:0
+msgid "Repair"
+msgstr "Onarım"
+
+#. module: technical_service
+#: selection:technical_service.work_order,x_work_type:0
+msgid "Installation"
+msgstr "Kurulum"
+
+#. module: technical_service
+#: selection:technical_service.work_order,x_work_type:0
+msgid "Maintenance"
+msgstr "Bakım"
+
+#. module: technical_service
+#: selection:technical_service.work_order,x_work_type:0
+msgid "Inspection"
+msgstr "Denetim"
+
+#. module: technical_service
+#: selection:technical_service.work_order,x_work_type:0
+msgid "Calibration"
+msgstr "Kalibrasyon"
+
+#. module: technical_service
+#: selection:technical_service.work_order,x_work_type:0
+msgid "Upgrade"
+msgstr "Yükseltme"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order__x_work_status
+msgid "Work Status"
+msgstr "İş Durumu"
+
+#. module: technical_service
+#: selection:technical_service.work_order,x_work_status:0
+msgid "Pending"
+msgstr "Beklemede"
+
+#. module: technical_service
+#: selection:technical_service.work_order,x_work_status:0
+msgid "In Progress"
+msgstr "Devam Ediyor"
+
+#. module: technical_service
+#: selection:technical_service.work_order,x_work_status:0
+msgid "Paused"
+msgstr "Duraklatıldı"
+
+#. module: technical_service
+#: selection:technical_service.work_order,x_work_status:0
+msgid "Completed"
+msgstr "Tamamlandı"
+
+#. module: technical_service
+#: selection:technical_service.work_order,x_work_status:0
+msgid "Cancelled"
+msgstr "İptal Edildi"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order__x_technician_id
+msgid "Technician"
+msgstr "Teknisyen"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order__x_scheduled_date
+msgid "Scheduled Date"
+msgstr "Planlanan Tarih"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order__x_estimated_duration
+msgid "Estimated Duration"
+msgstr "Tahmini Süre"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order__x_actual_duration
+msgid "Actual Duration"
+msgstr "Gerçek Süre"
+
+# ========== WORK ORDER CHECKLIST ==========
+
+#. module: technical_service
+#: model:ir.model,name:technical_service.model_technical_service_work_order_checklist
+msgid "Work Order Checklist"
+msgstr "İş Emri Kontrol Listesi"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order_checklist__name
+msgid "Task"
+msgstr "Görev"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order_checklist__description
+msgid "Description"
+msgstr "Açıklama"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order_checklist__is_done
+msgid "Completed"
+msgstr "Tamamlandı"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order_checklist__done_date
+msgid "Completion Date"
+msgstr "Tamamlanma Tarihi"
+
+# ========== WORK ORDER PARTS ==========
+
+#. module: technical_service
+#: model:ir.model,name:technical_service.model_technical_service_work_order_parts
+msgid "Work Order Parts"
+msgstr "İş Emri Parçaları"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order_parts__product_id
+msgid "Part"
+msgstr "Parça"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order_parts__quantity
+msgid "Quantity"
+msgstr "Miktar"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order_parts__unit_price
+msgid "Unit Price"
+msgstr "Birim Fiyat"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order_parts__subtotal
+msgid "Subtotal"
+msgstr "Ara Toplam"
+
+# ========== CONTRACT FIELDS ==========
+
+#. module: technical_service
+#: model:ir.model,name:technical_service.model_technical_service_contract
+msgid "Maintenance Contract"
+msgstr "Bakım Sözleşmesi"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_contract__name
+msgid "Contract Number"
+msgstr "Sözleşme Numarası"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_contract__partner_id
+msgid "Customer"
+msgstr "Müşteri"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_contract__contract_type
+msgid "Contract Type"
+msgstr "Sözleşme Türü"
+
+#. module: technical_service
+#: selection:technical_service.contract,contract_type:0
+msgid "Annual Maintenance Contract"
+msgstr "Yıllık Bakım Sözleşmesi"
+
+#. module: technical_service
+#: selection:technical_service.contract,contract_type:0
+msgid "Warranty"
+msgstr "Garanti"
+
+#. module: technical_service
+#: selection:technical_service.contract,contract_type:0
+msgid "On-Call Support"
+msgstr "Çağrı Üzerine Destek"
+
+#. module: technical_service
+#: selection:technical_service.contract,contract_type:0
+msgid "Preventive Maintenance"
+msgstr "Önleyici Bakım"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_contract__start_date
+msgid "Start Date"
+msgstr "Başlangıç Tarihi"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_contract__end_date
+msgid "End Date"
+msgstr "Bitiş Tarihi"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_contract__value
+msgid "Contract Value"
+msgstr "Sözleşme Değeri"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_contract__state
+msgid "Status"
+msgstr "Durum"
+
+#. module: technical_service
+#: selection:technical_service.contract,state:0
+msgid "Draft"
+msgstr "Taslak"
+
+#. module: technical_service
+#: selection:technical_service.contract,state:0
+msgid "Active"
+msgstr "Aktif"
+
+#. module: technical_service
+#: selection:technical_service.contract,state:0
+msgid "Expired"
+msgstr "Süresi Dolmuş"
+
+#. module: technical_service
+#: selection:technical_service.contract,state:0
+msgid "Cancelled"
+msgstr "İptal Edildi"
+
+# ========== CAMPUS FIELDS ==========
+
+#. module: technical_service
+#: model:ir.model,name:technical_service.model_technical_service_campus
+msgid "Campus"
+msgstr "Kampüs"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_campus__name
+msgid "Campus Name"
+msgstr "Kampüs Adı"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_campus__code
+msgid "Campus Code"
+msgstr "Kampüs Kodu"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_campus__address
+msgid "Address"
+msgstr "Adres"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_campus__city
+msgid "City"
+msgstr "Şehir"
+
+# ========== BUILDING FIELDS ==========
+
+#. module: technical_service
+#: model:ir.model,name:technical_service.model_technical_service_building
+msgid "Building"
+msgstr "Bina"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_building__name
+msgid "Building Name"
+msgstr "Bina Adı"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_building__code
+msgid "Building Code"
+msgstr "Bina Kodu"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_building__building_type
+msgid "Building Type"
+msgstr "Bina Türü"
+
+#. module: technical_service
+#: selection:technical_service.building,building_type:0
+msgid "Office"
+msgstr "Ofis"
+
+#. module: technical_service
+#: selection:technical_service.building,building_type:0
+msgid "Production"
+msgstr "Üretim"
+
+#. module: technical_service
+#: selection:technical_service.building,building_type:0
+msgid "Warehouse"
+msgstr "Depo"
+
+#. module: technical_service
+#: selection:technical_service.building,building_type:0
+msgid "Data Center"
+msgstr "Veri Merkezi"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_building__floor_count
+msgid "Number of Floors"
+msgstr "Kat Sayısı"
+
+# ========== SLA FIELDS ==========
+
+#. module: technical_service
+#: model:ir.model,name:technical_service.model_technical_service_sla
+msgid "SLA Policy"
+msgstr "SLA Politikası"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_sla__name
+msgid "SLA Policy Name"
+msgstr "SLA Politika Adı"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_sla__x_apply_to
+msgid "Apply To"
+msgstr "Uygulama Alanı"
+
+#. module: technical_service
+#: selection:technical_service.sla,x_apply_to:0
+msgid "All Requests"
+msgstr "Tüm Talepler"
+
+#. module: technical_service
+#: selection:technical_service.sla,x_apply_to:0
+msgid "Specific Category"
+msgstr "Belirli Kategori"
+
+#. module: technical_service
+#: selection:technical_service.sla,x_apply_to:0
+msgid "Specific Location"
+msgstr "Belirli Konum"
+
+#. module: technical_service
+#: selection:technical_service.sla,x_apply_to:0
+msgid "Specific Customer"
+msgstr "Belirli Müşteri"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_sla__x_business_hours_start
+msgid "Business Hours Start"
+msgstr "İş Saatleri Başlangıç"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_sla__x_business_hours_end
+msgid "Business Hours End"
+msgstr "İş Saatleri Bitiş"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_sla__x_include_weekends
+msgid "Include Weekends"
+msgstr "Hafta Sonlarını Dahil Et"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_sla__x_enable_escalation
+msgid "Enable Escalation"
+msgstr "Eskalasyonu Etkinleştir"
+
+# ========== TEAM FIELDS ==========
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_team__x_specialization
+msgid "Specialization"
+msgstr "Uzmanlık"
+
+#. module: technical_service
+#: selection:maintenance.team,x_specialization:0
+msgid "IT Support"
+msgstr "BT Desteği"
+
+#. module: technical_service
+#: selection:maintenance.team,x_specialization:0
+msgid "Facility Management"
+msgstr "Tesis Yönetimi"
+
+#. module: technical_service
+#: selection:maintenance.team,x_specialization:0
+msgid "Production Support"
+msgstr "Üretim Desteği"
+
+#. module: technical_service
+#: selection:maintenance.team,x_specialization:0
+msgid "Field Service"
+msgstr "Saha Servisi"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_team__x_shift_type
+msgid "Shift Type"
+msgstr "Vardiya Türü"
+
+#. module: technical_service
+#: selection:maintenance.team,x_shift_type:0
+msgid "Day Shift"
+msgstr "Gündüz Vardiyası"
+
+#. module: technical_service
+#: selection:maintenance.team,x_shift_type:0
+msgid "Night Shift"
+msgstr "Gece Vardiyası"
+
+#. module: technical_service
+#: selection:maintenance.team,x_shift_type:0
+msgid "24x7 Support"
+msgstr "7/24 Destek"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_team__x_member_count
+msgid "Member Count"
+msgstr "Üye Sayısı"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_team__x_active_requests
+msgid "Active Requests"
+msgstr "Aktif Talepler"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_team__x_pending_requests
+msgid "Pending Requests"
+msgstr "Bekleyen Talepler"
+
+# ========== ASSET FIELDS ==========
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_equipment__x_asset_code
+msgid "Asset Code"
+msgstr "Varlık Kodu"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_equipment__x_asset_type
+msgid "Asset Type"
+msgstr "Varlık Türü"
+
+#. module: technical_service
+#: selection:maintenance.equipment,x_asset_type:0
+msgid "IT Equipment"
+msgstr "BT Ekipmanı"
+
+#. module: technical_service
+#: selection:maintenance.equipment,x_asset_type:0
+msgid "Production Equipment"
+msgstr "Üretim Ekipmanı"
+
+#. module: technical_service
+#: selection:maintenance.equipment,x_asset_type:0
+msgid "Office Equipment"
+msgstr "Ofis Ekipmanı"
+
+#. module: technical_service
+#: selection:maintenance.equipment,x_asset_type:0
+msgid "Vehicle"
+msgstr "Araç"
+
+#. module: technical_service
+#: selection:maintenance.equipment,x_asset_type:0
+msgid "Building System"
+msgstr "Bina Sistemi"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_equipment__x_warranty_status
+msgid "Warranty Status"
+msgstr "Garanti Durumu"
+
+#. module: technical_service
+#: selection:maintenance.equipment,x_warranty_status:0
+msgid "Under Warranty"
+msgstr "Garanti Kapsamında"
+
+#. module: technical_service
+#: selection:maintenance.equipment,x_warranty_status:0
+msgid "Warranty Expired"
+msgstr "Garantisi Bitmiş"
+
+#. module: technical_service
+#: selection:maintenance.equipment,x_warranty_status:0
+msgid "No Warranty"
+msgstr "Garanti Yok"
+
+# ========== BUTTONS & ACTIONS ==========
+
+#. module: technical_service
+#: model:ir.model.fields.selection,name:technical_service.selection__technical_service_work_order__state__draft
+msgid "Create"
+msgstr "Oluştur"
+
+#. module: technical_service
+#: code:addons/technical_service/models/technical_service_work_order.py:0
+#, python-format
+msgid "Start Work"
+msgstr "İşe Başla"
+
+#. module: technical_service
+#: code:addons/technical_service/models/technical_service_work_order.py:0
+#, python-format
+msgid "Pause Work"
+msgstr "İşi Duraklat"
+
+#. module: technical_service
+#: code:addons/technical_service/models/technical_service_work_order.py:0
+#, python-format
+msgid "Resume Work"
+msgstr "İşe Devam Et"
+
+#. module: technical_service
+#: code:addons/technical_service/models/technical_service_work_order.py:0
+#, python-format
+msgid "Complete Work"
+msgstr "İşi Tamamla"
+
+#. module: technical_service
+#: code:addons/technical_service/models/technical_service_work_order.py:0
+#, python-format
+msgid "Cancel"
+msgstr "İptal"
+
+# ========== MESSAGES & WARNINGS ==========
+
+#. module: technical_service
+#: code:addons/technical_service/models/technical_service_request.py:0
+#, python-format
+msgid "Service request created successfully."
+msgstr "Servis talebi başarıyla oluşturuldu."
+
+#. module: technical_service
+#: code:addons/technical_service/models/technical_service_work_order.py:0
+#, python-format
+msgid "Work order has been started."
+msgstr "İş emri başlatıldı."
+
+#. module: technical_service
+#: code:addons/technical_service/models/technical_service_work_order.py:0
+#, python-format
+msgid "Work order has been completed."
+msgstr "İş emri tamamlandı."
+
+#. module: technical_service
+#: code:addons/technical_service/models/technical_service_request.py:0
+#, python-format
+msgid "SLA deadline is approaching!"
+msgstr "SLA süresi yaklaşıyor!"
+
+#. module: technical_service
+#: code:addons/technical_service/models/technical_service_request.py:0
+#, python-format
+msgid "SLA has been breached!"
+msgstr "SLA ihlal edildi!"
+
+# ========== REPORT STRINGS ==========
+
+#. module: technical_service
+#: model:ir.actions.report,name:technical_service.report_work_order
+msgid "Work Order Report"
+msgstr "İş Emri Raporu"
+
+#. module: technical_service
+#: model:ir.actions.report,name:technical_service.report_service_request
+msgid "Service Request Report"
+msgstr "Servis Talebi Raporu"
+
+#. module: technical_service
+#: model:ir.actions.report,name:technical_service.report_sla_performance
+msgid "SLA Performance Report"
+msgstr "SLA Performans Raporu"
+
+# ========== HELP TEXTS ==========
+
+#. module: technical_service
+#: model:ir.model.fields,help:technical_service.field_maintenance_request__x_priority_level
+msgid "Priority is calculated based on Impact x Urgency matrix"
+msgstr "Öncelik, Etki x Aciliyet matrisine göre hesaplanır"
+
+#. module: technical_service
+#: model:ir.model.fields,help:technical_service.field_technical_service_sla__x_enable_escalation
+msgid "Enable automatic escalation when SLA targets are at risk"
+msgstr "SLA hedefleri risk altında olduğunda otomatik eskalasyonu etkinleştir"
+
+#. module: technical_service
+#: model:ir.model.fields,help:technical_service.field_technical_service_work_order__x_estimated_duration
+msgid "Estimated time to complete the work in hours"
+msgstr "İşin tamamlanması için tahmini süre (saat)"
+
+# ========== WIZARD STRINGS ==========
+
+#. module: technical_service
+#: model:ir.model,name:technical_service.model_technical_service_assign_wizard
+msgid "Assign Technician Wizard"
+msgstr "Teknisyen Atama Sihirbazı"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_assign_wizard__technician_id
+msgid "Select Technician"
+msgstr "Teknisyen Seç"
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_assign_wizard__reason
+msgid "Assignment Reason"
+msgstr "Atama Nedeni"
+
+# ========== EMAIL TEMPLATES ==========
+
+#. module: technical_service
+#: model:mail.template,subject:technical_service.email_template_service_request_created
+msgid "Service Request ${object.x_request_number} Created"
+msgstr "Servis Talebi ${object.x_request_number} Oluşturuldu"
+
+#. module: technical_service
+#: model:mail.template,subject:technical_service.email_template_work_order_assigned
+msgid "Work Order Assigned to You"
+msgstr "Size İş Emri Atandı"
+
+#. module: technical_service
+#: model:mail.template,subject:technical_service.email_template_sla_warning
+msgid "SLA Warning: ${object.x_request_number}"
+msgstr "SLA Uyarısı: ${object.x_request_number}"
+
+# ========== ADDITIONAL TRANSLATIONS ==========
+
+#. module: technical_service
+#: model:res.users,name:base.user_admin
+msgid "Administrator"
+msgstr "Yönetici"
+
+#. module: technical_service
+#: code:addons/technical_service/models/maintenance_request.py:0
+msgid "New"
+msgstr "Yeni"

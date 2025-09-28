@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Work Order List View -->
+    <record id="view_technical_service_work_order_list" model="ir.ui.view">
+        <field name="name">technical.service.work_order.list</field>
+        <field name="model">technical_service.work_order</field>
+        <field name="arch" type="xml">
+            <list string="Work Orders" create="1" edit="1">
+                <field name="name"/>
+                <field name="x_request_id"/>
+                <field name="x_work_type"/>
+                <field name="x_technician_id"/>
+                <field name="x_scheduled_date"/>
+                <field name="x_work_status" widget="badge"
+                       decoration-success="x_work_status == 'completed'"
+                       decoration-warning="x_work_status == 'paused'"
+                       decoration-info="x_work_status == 'in_progress'"/>
+                <field name="x_estimated_duration" widget="float_time"/>
+                <field name="x_actual_duration" widget="float_time"/>
+                <field name="x_checklist_progress" widget="progressbar"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Work Order Calendar View -->
+    <record id="view_technical_service_work_order_calendar" model="ir.ui.view">
+        <field name="name">technical.service.work_order.calendar</field>
+        <field name="model">technical_service.work_order</field>
+        <field name="arch" type="xml">
+            <calendar string="Work Orders Calendar"
+                      date_start="x_scheduled_date"
+                      date_delay="x_estimated_duration"
+                      color="x_technician_id"
+                      quick_create="True"
+                      mode="month"
+                      event_open_popup="True">
+                <field name="name"/>
+                <field name="x_technician_id" avatar_field="image_128"/>
+                <field name="x_work_type"/>
+                <field name="x_work_status" filters="1" invisible="1"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Work Order Form View -->
+    <record id="view_technical_service_work_order_form" model="ir.ui.view">
+        <field name="name">technical.service.work_order.form</field>
+        <field name="model">technical_service.work_order</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_start_work" string="Start Work" type="object"
+                            class="btn-primary" invisible="x_work_status != 'pending'"/>
+                    <button name="action_pause_work" string="Pause" type="object"
+                            class="btn-warning" invisible="x_work_status != 'in_progress'"/>
+                    <button name="action_resume_work" string="Resume" type="object"
+                            class="btn-info" invisible="x_work_status != 'paused'"/>
+                    <button name="action_complete_work" string="Complete" type="object"
+                            class="btn-success" invisible="x_work_status not in ['in_progress', 'paused']"/>
+                    <field name="x_work_status" widget="statusbar"
+                           statusbar_visible="pending,in_progress,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Work Order Title..."/>
+                        </h1>
+                        <h3>
+                            <field name="x_request_id" readonly="1"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group string="Work Information">
+                            <field name="x_work_type" required="1"/>
+                            <field name="x_technician_id" required="1"/>
+                            <field name="x_scheduled_date"/>
+                            <field name="x_estimated_duration" widget="float_time"/>
+                        </group>
+                        <group string="Execution">
+                            <field name="x_start_datetime" readonly="1"/>
+                            <field name="x_end_datetime" readonly="1"/>
+                            <field name="x_actual_duration" widget="float_time" readonly="1"/>
+                            <field name="x_checklist_progress" widget="progressbar"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Checklist" name="checklist">
+                            <field name="x_checklist_line_ids">
+                                <list editable="bottom" create="1" delete="1">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name" required="1"/>
+                                    <field name="description"/>
+                                    <field name="is_done"/>
+                                    <field name="done_date" readonly="1"/>
+                                    <field name="notes"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Parts Used" name="parts">
+                            <field name="x_parts_line_ids">
+                                <list editable="bottom" create="1" delete="1">
+                                    <field name="product_id" required="1"/>
+                                    <field name="quantity" required="1"/>
+                                    <field name="unit_price" readonly="1"/>
+                                    <field name="subtotal" readonly="1" sum="Total Cost"/>
+                                    <field name="notes"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer">
+                                <field name="x_total_parts_cost" widget="monetary"/>
+                            </group>
+                        </page>
+                        <page string="Time Logs" name="time_logs">
+                            <field name="x_time_log_ids" readonly="1">
+                                <list create="0" delete="0">
+                                    <field name="technician_id"/>
+                                    <field name="start_time"/>
+                                    <field name="end_time"/>
+                                    <field name="duration" widget="float_time" sum="Total Hours"/>
+                                    <field name="work_description"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Work Details" name="work_details">
+                            <group>
+                                <field name="x_work_performed" widget="html"
+                                       placeholder="Describe the work performed..."/>
+                                <field name="x_root_cause" placeholder="Root cause analysis..."/>
+                                <field name="x_recommendations" placeholder="Future recommendations..."/>
+                            </group>
+                        </page>
+                        <page string="Safety" name="safety">
+                            <group>
+                                <field name="x_safety_checklist_completed"/>
+                                <field name="x_risk_assessment" widget="html"/>
+                            </group>
+                        </page>
+                        <page string="Signatures" name="signatures">
+                            <group>
+                                <group string="Technician">
+                                    <field name="x_technician_signature" widget="signature"/>
+                                </group>
+                                <group string="Customer">
+                                    <field name="x_customer_signature" widget="signature"/>
+                                    <field name="x_signature_date" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Photos" name="photos">
+                            <group>
+                                <group string="Before">
+                                    <field name="x_before_photo" widget="image" class="oe_avatar"/>
+                                </group>
+                                <group string="After">
+                                    <field name="x_after_photo" widget="image" class="oe_avatar"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Work Order Kanban View -->
+    <record id="view_technical_service_work_order_kanban" model="ir.ui.view">
+        <field name="name">technical.service.work_order.kanban</field>
+        <field name="model">technical_service.work_order</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="x_work_status">
+                <field name="name"/>
+                <field name="x_request_id"/>
+                <field name="x_work_type"/>
+                <field name="x_technician_id"/>
+                <field name="x_scheduled_date"/>
+                <field name="x_work_status"/>
+                <field name="x_checklist_progress"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title">
+                                    <field name="name"/>
+                                </strong>
+                                <div class="text-muted">
+                                    <field name="x_request_id"/>
+                                </div>
+                                <div>
+                                    <span class="badge rounded-pill text-bg-info">
+                                        <field name="x_work_type"/>
+                                    </span>
+                                </div>
+                                <div>
+                                    <strong>Technician:</strong> <field name="x_technician_id"/>
+                                </div>
+                                <div>
+                                    <strong>Scheduled:</strong> <field name="x_scheduled_date"/>
+                                </div>
+                                <div>
+                                    <field name="x_checklist_progress" widget="progressbar"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Work Order Pivot View -->
+    <record id="view_technical_service_work_order_pivot" model="ir.ui.view">
+        <field name="name">technical.service.work_order.pivot</field>
+        <field name="model">technical_service.work_order</field>
+        <field name="arch" type="xml">
+            <pivot string="Work Orders Analysis">
+                <field name="x_technician_id" type="row"/>
+                <field name="x_work_type" type="col"/>
+                <field name="x_actual_duration" type="measure" widget="float_time"/>
+                <field name="x_total_parts_cost" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_technical_service_work_order_search" model="ir.ui.view">
+        <field name="name">technical.service.work_order.search</field>
+        <field name="model">technical_service.work_order</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="x_request_id"/>
+                <field name="x_technician_id"/>
+                <filter string="My Work Orders" name="my_orders"
+                        domain="[('x_technician_user_id', '=', uid)]"/>
+                <separator/>
+                <filter string="Pending" name="pending"
+                        domain="[('x_work_status', '=', 'pending')]"/>
+                <filter string="In Progress" name="in_progress"
+                        domain="[('x_work_status', '=', 'in_progress')]"/>
+                <filter string="Completed" name="completed"
+                        domain="[('x_work_status', '=', 'completed')]"/>
+                <separator/>
+                <filter string="Today" name="today"
+                        domain="[('x_scheduled_date', '&gt;=', datetime.datetime.now().replace(hour=0, minute=0, second=0)),
+                                 ('x_scheduled_date', '&lt;', datetime.datetime.now().replace(hour=23, minute=59, second=59))]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="group_status"
+                            context="{'group_by': 'x_work_status'}"/>
+                    <filter string="Work Type" name="group_type"
+                            context="{'group_by': 'x_work_type'}"/>
+                    <filter string="Technician" name="group_tech"
+                            context="{'group_by': 'x_technician_id'}"/>
+                    <filter string="Scheduled Date" name="group_date"
+                            context="{'group_by': 'x_scheduled_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_technical_service_work_order" model="ir.actions.act_window">
+        <field name="name">Work Orders</field>
+        <field name="res_model">technical_service.work_order</field>
+        <field name="view_mode">list,kanban,form,calendar,pivot</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first work order!
+            </p>
+            <p>
+                Manage field service work orders with checklists, time tracking, and parts usage.
+            </p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Override Maintenance module's Teams menu to use our action -->
+    <record id="maintenance.menu_maintenance_teams" model="ir.ui.menu">
+        <field name="action" ref="technical_service.action_technical_service_team"/>
+    </record>
+</odoo>

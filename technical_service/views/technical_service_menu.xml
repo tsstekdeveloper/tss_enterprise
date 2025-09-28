@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root Menu -->
+    <menuitem id="menu_technical_service_root"
+              name="Technical Service"
+              sequence="10"
+              web_icon="technical_service,static/description/icon.png"/>
+
+    <!-- Dashboard -->
+    <menuitem id="menu_dashboard"
+              name="Dashboard"
+              parent="menu_technical_service_root"
+              sequence="5"/>
+
+
+    <!-- Service Management -->
+    <menuitem id="menu_service_management"
+              name="Service Management"
+              parent="menu_technical_service_root"
+              sequence="10"/>
+
+    <menuitem id="menu_service_requests"
+              name="Service Requests"
+              parent="menu_service_management"
+              action="action_technical_service_request"
+              sequence="10"/>
+
+    <menuitem id="menu_work_orders"
+              name="Work Orders"
+              parent="menu_service_management"
+              action="action_technical_service_work_order"
+              sequence="20"/>
+
+    <!-- Asset Management -->
+    <menuitem id="menu_asset_management"
+              name="Asset Management"
+              parent="menu_technical_service_root"
+              sequence="20"/>
+
+    <menuitem id="menu_assets"
+              name="Assets/Equipment"
+              parent="menu_asset_management"
+              action="action_technical_service_asset"
+              sequence="10"/>
+
+    <menuitem id="menu_contracts"
+              name="Maintenance Contracts"
+              parent="menu_asset_management"
+              action="action_technical_service_contract"
+              sequence="20"/>
+
+    <!-- Reporting & Analytics -->
+    <menuitem id="menu_reporting"
+              name="Reporting"
+              parent="menu_technical_service_root"
+              sequence="30"/>
+
+
+    <!-- Configuration -->
+    <menuitem id="menu_configuration"
+              name="Configuration"
+              parent="menu_technical_service_root"
+              sequence="90"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_campus"
+              name="Campuses"
+              parent="menu_configuration"
+              action="action_technical_service_campus"
+              sequence="10"/>
+
+    <menuitem id="menu_building"
+              name="Buildings"
+              parent="menu_configuration"
+              action="action_technical_service_building"
+              sequence="20"/>
+
+    <menuitem id="menu_sla"
+              name="SLA Policies"
+              parent="menu_configuration"
+              action="action_technical_service_sla"
+              sequence="30"/>
+
+    <menuitem id="menu_teams"
+              name="Service Teams"
+              parent="menu_configuration"
+              action="action_technical_service_team"
+              sequence="40"/>
+</odoo>

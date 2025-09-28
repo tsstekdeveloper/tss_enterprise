@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Request Analysis Pivot View -->
+    <record id="view_technical_service_request_pivot" model="ir.ui.view">
+        <field name="name">technical.service.request.pivot</field>
+        <field name="model">maintenance.request</field>
+        <field name="arch" type="xml">
+            <pivot string="Request Analysis" sample="1">
+                <field name="x_category" type="row"/>
+                <field name="x_campus_id" type="row"/>
+                <field name="x_priority_level" type="col"/>
+                <field name="stage_id" type="col"/>
+                <field name="x_resolution_time" type="measure" widget="float_time"/>
+                <field name="x_response_time" type="measure" widget="float_time"/>
+                <field name="x_downtime" type="measure" widget="float_time"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Request Analysis Graph View -->
+    <record id="view_technical_service_request_graph" model="ir.ui.view">
+        <field name="name">technical.service.request.graph</field>
+        <field name="model">maintenance.request</field>
+        <field name="arch" type="xml">
+            <graph string="Request Trends" type="line" sample="1">
+                <field name="request_date" type="row" interval="month"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- SLA Performance Pivot View -->
+    <record id="view_technical_service_sla_performance_pivot" model="ir.ui.view">
+        <field name="name">technical.service.sla.performance.pivot</field>
+        <field name="model">maintenance.request</field>
+        <field name="arch" type="xml">
+            <pivot string="SLA Performance" sample="1">
+                <field name="x_sla_policy_id" type="row"/>
+                <field name="x_priority_level" type="row"/>
+                <field name="x_sla_status" type="col"/>
+                <field name="x_response_time" type="measure" widget="float_time"/>
+                <field name="x_resolution_time" type="measure" widget="float_time"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- SLA Compliance Graph View -->
+    <record id="view_technical_service_sla_graph" model="ir.ui.view">
+        <field name="name">technical.service.sla.graph</field>
+        <field name="model">maintenance.request</field>
+        <field name="arch" type="xml">
+            <graph string="SLA Compliance" type="pie" sample="1">
+                <field name="x_sla_status"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Team Performance Pivot View -->
+    <record id="view_technical_service_team_performance_pivot" model="ir.ui.view">
+        <field name="name">technical.service.team.performance.pivot</field>
+        <field name="model">maintenance.request</field>
+        <field name="arch" type="xml">
+            <pivot string="Team Performance" sample="1">
+                <field name="maintenance_team_id" type="row"/>
+                <field name="user_id" type="row"/>
+                <field name="stage_id" type="col"/>
+                <field name="x_resolution_time" type="measure" widget="float_time"/>
+                <field name="x_feedback_score" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Location Analysis Pivot View -->
+    <record id="view_technical_service_location_pivot" model="ir.ui.view">
+        <field name="name">technical.service.location.pivot</field>
+        <field name="model">maintenance.request</field>
+        <field name="arch" type="xml">
+            <pivot string="Location Analysis" sample="1">
+                <field name="x_campus_id" type="row"/>
+                <field name="x_building_id" type="row"/>
+                <field name="x_request_type" type="col"/>
+                <field name="x_priority_level" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Category Distribution Graph View -->
+    <record id="view_technical_service_category_graph" model="ir.ui.view">
+        <field name="name">technical.service.category.graph</field>
+        <field name="model">maintenance.request</field>
+        <field name="arch" type="xml">
+            <graph string="Request Categories" type="bar" stacked="1" sample="1">
+                <field name="x_category" type="row"/>
+                <field name="x_subcategory" type="row"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Work Order Analysis Pivot View -->
+    <record id="view_technical_service_work_order_pivot" model="ir.ui.view">
+        <field name="name">technical.service.work_order.pivot</field>
+        <field name="model">technical_service.work_order</field>
+        <field name="arch" type="xml">
+            <pivot string="Work Order Analysis" sample="1">
+                <field name="x_work_type" type="row"/>
+                <field name="x_technician_id" type="row"/>
+                <field name="x_work_status" type="col"/>
+                <field name="x_actual_duration" type="measure" widget="float_time"/>
+                <field name="x_total_parts_cost" type="measure" widget="monetary"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Work Order Performance Graph View -->
+    <record id="view_technical_service_work_order_graph" model="ir.ui.view">
+        <field name="name">technical.service.work_order.graph</field>
+        <field name="model">technical_service.work_order</field>
+        <field name="arch" type="xml">
+            <graph string="Work Order Performance" type="bar" sample="1">
+                <field name="x_technician_id" type="row"/>
+                <field name="x_actual_duration" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Asset Maintenance Cost Analysis -->
+    <record id="view_technical_service_asset_cost_pivot" model="ir.ui.view">
+        <field name="name">technical.service.asset.cost.pivot</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="arch" type="xml">
+            <pivot string="Asset Cost Analysis" sample="1">
+                <field name="x_asset_type" type="row"/>
+                <field name="category_id" type="row"/>
+                <field name="x_campus_id" type="col"/>
+                <field name="x_total_maintenance_cost" type="measure" widget="monetary"/>
+                <field name="x_downtime_hours" type="measure" widget="float_time"/>
+                <field name="x_failure_count" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Asset Reliability Graph View -->
+    <record id="view_technical_service_asset_reliability_graph" model="ir.ui.view">
+        <field name="name">technical.service.asset.reliability.graph</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="arch" type="xml">
+            <graph string="Asset Reliability" type="bar" sample="1">
+                <field name="x_asset_type" type="row"/>
+                <field name="x_failure_count" type="measure"/>
+                <field name="x_downtime_hours" type="measure" widget="float_time"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Customer Satisfaction Graph View -->
+    <record id="view_technical_service_satisfaction_graph" model="ir.ui.view">
+        <field name="name">technical.service.satisfaction.graph</field>
+        <field name="model">maintenance.request</field>
+        <field name="arch" type="xml">
+            <graph string="Customer Satisfaction" type="line" sample="1">
+                <field name="x_feedback_date" type="row" interval="month"/>
+                <field name="x_feedback_score" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Response Time Trend Graph -->
+    <record id="view_technical_service_response_trend_graph" model="ir.ui.view">
+        <field name="name">technical.service.response.trend.graph</field>
+        <field name="model">maintenance.request</field>
+        <field name="arch" type="xml">
+            <graph string="Response Time Trends" type="line" sample="1">
+                <field name="request_date" type="row" interval="week"/>
+                <field name="x_response_time" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Contract Performance Pivot View -->
+    <record id="view_technical_service_contract_pivot" model="ir.ui.view">
+        <field name="name">technical.service.contract.pivot</field>
+        <field name="model">technical_service.contract</field>
+        <field name="arch" type="xml">
+            <pivot string="Contract Analysis" sample="1">
+                <field name="partner_id" type="row"/>
+                <field name="contract_type" type="row"/>
+                <field name="state" type="col"/>
+                <field name="value" type="measure" widget="monetary"/>
+                <field name="equipment_count" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Reporting Actions -->
+
+    <!-- Request Analysis Report -->
+    <record id="action_technical_service_request_analysis" model="ir.actions.act_window">
+        <field name="name">Request Analysis</field>
+        <field name="res_model">maintenance.request</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="view_id" ref="view_technical_service_request_pivot"/>
+        <field name="context">{
+            'search_default_group_category': 1,
+            'pivot_measures': ['x_resolution_time', 'x_response_time']
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No data to analyze yet!
+            </p>
+            <p>
+                Analyze service request patterns by category, location, and priority.
+            </p>
+        </field>
+    </record>
+
+    <!-- SLA Performance Report -->
+    <record id="action_technical_service_sla_performance" model="ir.actions.act_window">
+        <field name="name">SLA Performance</field>
+        <field name="res_model">maintenance.request</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="view_id" ref="view_technical_service_sla_performance_pivot"/>
+        <field name="context">{
+            'search_default_group_sla': 1
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No SLA data available!
+            </p>
+            <p>
+                Monitor SLA compliance and performance metrics.
+            </p>
+        </field>
+    </record>
+
+    <!-- Team Performance Report -->
+    <record id="action_technical_service_team_performance" model="ir.actions.act_window">
+        <field name="name">Team Performance</field>
+        <field name="res_model">maintenance.request</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="view_id" ref="view_technical_service_team_performance_pivot"/>
+        <field name="context">{
+            'search_default_group_team': 1,
+            'search_default_closed_tasks': 1
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No performance data available!
+            </p>
+            <p>
+                Analyze team and technician performance metrics.
+            </p>
+        </field>
+    </record>
+
+    <!-- Asset Maintenance Report -->
+    <record id="action_technical_service_asset_analysis" model="ir.actions.act_window">
+        <field name="name">Asset Analysis</field>
+        <field name="res_model">maintenance.equipment</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="view_id" ref="view_technical_service_asset_cost_pivot"/>
+        <field name="context">{
+            'pivot_measures': ['x_total_maintenance_cost', 'x_downtime_hours', 'x_failure_count']
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No asset data available!
+            </p>
+            <p>
+                Analyze asset maintenance costs and reliability.
+            </p>
+        </field>
+    </record>
+
+    <!-- Customer Satisfaction Report -->
+    <record id="action_technical_service_satisfaction" model="ir.actions.act_window">
+        <field name="name">Customer Satisfaction</field>
+        <field name="res_model">maintenance.request</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="view_id" ref="view_technical_service_satisfaction_graph"/>
+        <field name="domain">[('x_feedback_score', '!=', False)]</field>
+        <field name="context">{
+            'graph_measure': 'x_feedback_score'
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No feedback data available!
+            </p>
+            <p>
+                Track customer satisfaction trends over time.
+            </p>
+        </field>
+    </record>
+
+    <!-- Work Order Analysis Report -->
+    <record id="action_technical_service_work_order_analysis" model="ir.actions.act_window">
+        <field name="name">Work Order Analysis</field>
+        <field name="res_model">technical_service.work_order</field>
+        <field name="view_mode">pivot,graph,calendar,list</field>
+        <field name="view_id" ref="view_technical_service_work_order_pivot"/>
+        <field name="context">{
+            'search_default_completed': 1,
+            'pivot_measures': ['x_actual_duration', 'x_total_parts_cost']
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No work order data available!
+            </p>
+            <p>
+                Analyze work order efficiency and costs.
+            </p>
+        </field>
+    </record>
+
+    <!-- Contract Analysis Report -->
+    <record id="action_technical_service_contract_analysis" model="ir.actions.act_window">
+        <field name="name">Contract Analysis</field>
+        <field name="res_model">technical_service.contract</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="view_id" ref="view_technical_service_contract_pivot"/>
+        <field name="context">{
+            'pivot_measures': ['value', 'equipment_count']
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No contract data available!
+            </p>
+            <p>
+                Analyze maintenance contracts and coverage.
+            </p>
+        </field>
+    </record>
+</odoo>

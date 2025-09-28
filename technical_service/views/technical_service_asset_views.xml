@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Asset List View -->
+    <record id="view_technical_service_asset_list" model="ir.ui.view">
+        <field name="name">technical.service.asset.list</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="before">
+                <field name="x_asset_code"/>
+            </field>
+            <xpath expr="//field[@name='technician_user_id']" position="after">
+                <field name="x_asset_type"/>
+                <field name="x_campus_id"/>
+                <field name="x_building_id"/>
+                <field name="x_warranty_status" widget="badge"
+                       decoration-success="x_warranty_status == 'in_warranty'"
+                       decoration-danger="x_warranty_status == 'expired'"/>
+                <field name="x_contract_status" widget="badge"
+                       decoration-success="x_contract_status == 'active'"
+                       decoration-danger="x_contract_status == 'expired'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Asset Form View -->
+    <record id="view_technical_service_asset_form" model="ir.ui.view">
+        <field name="name">technical.service.asset.form</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Add ribbons -->
+            <xpath expr="//form/sheet" position="before">
+                <header>
+                    <button name="action_create_maintenance_request" string="Create Service Request"
+                            type="object" class="btn-primary"/>
+                </header>
+            </xpath>
+
+            <xpath expr="//sheet/div[@class='oe_title']" position="before">
+                <widget name="web_ribbon" title="Under Warranty"
+                        bg_color="text-bg-success"
+                        invisible="x_warranty_status != 'in_warranty'"/>
+                <widget name="web_ribbon" title="Contract Active"
+                        bg_color="text-bg-info"
+                        invisible="x_contract_status != 'active'"/>
+            </xpath>
+
+            <!-- Add asset code -->
+            <xpath expr="//field[@name='name']" position="before">
+                <label for="x_asset_code" string="Asset Code"/>
+                <h2>
+                    <field name="x_asset_code" placeholder="ASSET-001"/>
+                </h2>
+            </xpath>
+
+            <!-- Replace groups -->
+            <xpath expr="//group" position="replace">
+                <group>
+                    <group string="Asset Information">
+                        <field name="x_asset_type" required="1"/>
+                        <field name="category_id"/>
+                        <field name="x_manufacturer"/>
+                        <field name="model"/>
+                        <field name="serial_no"/>
+                        <field name="x_barcode"/>
+                    </group>
+                    <group string="Financial Information">
+                        <field name="x_purchase_date"/>
+                        <field name="x_purchase_value"/>
+                        <field name="x_current_value"/>
+                        <field name="x_depreciation_rate" widget="percentage"/>
+                    </group>
+                </group>
+                <group>
+                    <group string="Location">
+                        <field name="x_campus_id" required="1"/>
+                        <field name="x_building_id"
+                               domain="[('campus_id', '=', x_campus_id)]"/>
+                        <field name="x_floor"/>
+                        <field name="x_room"/>
+                    </group>
+                    <group string="Assignment">
+                        <field name="x_assigned_employee_id"/>
+                        <field name="x_department_id"/>
+                        <field name="maintenance_team_id"/>
+                        <field name="x_assignment_date"/>
+                        <field name="owner_user_id" string="Responsible User"/>
+                    </group>
+                </group>
+            </xpath>
+
+            <!-- Add notebook -->
+            <xpath expr="//sheet/group" position="after">
+                <notebook>
+                    <page string="Warranty" name="warranty">
+                        <group>
+                            <group string="Warranty Information">
+                                <field name="x_warranty_start_date"/>
+                                <field name="x_warranty_end_date"/>
+                                <field name="x_warranty_status" readonly="1"/>
+                                <field name="x_warranty_vendor_id"/>
+                            </group>
+                            <group string="Service Contract">
+                                <field name="x_contract_id"/>
+                                <field name="x_contract_start_date"/>
+                                <field name="x_contract_end_date"/>
+                                <field name="x_contract_status" readonly="1"/>
+                            </group>
+                        </group>
+                    </page>
+                    <page string="Maintenance" name="maintenance">
+                        <group>
+                            <group string="Maintenance Schedule">
+                                <field name="x_maintenance_frequency"/>
+                                <field name="x_last_maintenance_date"/>
+                                <field name="x_next_maintenance_date"/>
+                            </group>
+                            <group string="Calibration" invisible="not x_requires_calibration">
+                                <field name="x_requires_calibration"/>
+                                <field name="x_last_calibration_date"/>
+                                <field name="x_next_calibration_date"/>
+                                <field name="x_calibration_certificate" filename="calibration_cert"/>
+                            </group>
+                        </group>
+                    </page>
+                    <page string="Statistics" name="stats">
+                        <group>
+                            <group string="Performance Metrics">
+                                <field name="x_failure_count"/>
+                                <field name="x_downtime_hours" widget="float_time"/>
+                            </group>
+                            <group string="Cost Analysis">
+                                <field name="x_total_maintenance_cost" widget="monetary"/>
+                            </group>
+                        </group>
+                    </page>
+                    <page string="Service History" name="history">
+                        <field name="maintenance_ids" readonly="1">
+                            <list>
+                                <field name="name"/>
+                                <field name="request_date"/>
+                                <field name="stage_id"/>
+                                <field name="user_id"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Contract List View -->
+    <record id="view_technical_service_contract_list" model="ir.ui.view">
+        <field name="name">technical.service.contract.list</field>
+        <field name="model">technical_service.contract</field>
+        <field name="arch" type="xml">
+            <list string="Maintenance Contracts" create="1" edit="1">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="contract_type"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="equipment_count"/>
+                <field name="value" widget="monetary"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'active'"
+                       decoration-danger="state == 'expired'"
+                       decoration-muted="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Contract Calendar View -->
+    <record id="view_technical_service_contract_calendar" model="ir.ui.view">
+        <field name="name">technical.service.contract.calendar</field>
+        <field name="model">technical_service.contract</field>
+        <field name="arch" type="xml">
+            <calendar string="Maintenance Contracts Calendar"
+                      date_start="start_date"
+                      date_stop="end_date"
+                      color="partner_id"
+                      quick_create="True"
+                      mode="month"
+                      event_open_popup="True">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="contract_type"/>
+                <field name="state"/>
+                <field name="value"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Contract Form View -->
+    <record id="view_technical_service_contract_form" model="ir.ui.view">
+        <field name="name">technical.service.contract.form</field>
+        <field name="model">technical_service.contract</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_activate" string="Activate" type="object"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_expire" string="Mark as Expired" type="object"
+                            invisible="state != 'active'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,active,expired"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Contract Number..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Contract Details">
+                            <field name="partner_id" required="1"/>
+                            <field name="contract_type" required="1"/>
+                            <field name="x_coverage_type"/>
+                            <field name="value"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Validity">
+                            <field name="start_date" required="1"/>
+                            <field name="end_date" required="1"/>
+                            <field name="equipment_count"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="SLA Terms">
+                            <field name="x_response_time" widget="float_time"/>
+                            <field name="x_resolution_time" widget="float_time"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Covered Equipment" name="equipment">
+                            <field name="equipment_ids">
+                                <list>
+                                    <field name="x_asset_code"/>
+                                    <field name="name"/>
+                                    <field name="category_id"/>
+                                    <field name="x_campus_id"/>
+                                    <field name="x_building_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" widget="html"/>
+                        </page>
+                        <page string="Attachments" name="attachments">
+                            <field name="attachment_ids" widget="many2many_binary"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_technical_service_asset" model="ir.actions.act_window">
+        <field name="name">Assets/Equipment</field>
+        <field name="res_model">maintenance.equipment</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Register your first asset!
+            </p>
+            <p>
+                Manage all your equipment, assets, and their maintenance schedules.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_technical_service_contract" model="ir.actions.act_window">
+        <field name="name">Maintenance Contracts</field>
+        <field name="res_model">technical_service.contract</field>
+        <field name="view_mode">list,form,calendar</field>
+        <field name="context">{'default_state': 'draft'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first maintenance contract!
+            </p>
+        </field>
+    </record>
+</odoo>

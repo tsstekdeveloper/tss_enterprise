@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.technical.service</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="50"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Technical Service" string="Technical Service" name="technical_service" groups="base.group_system">
+                    <block title="Service Request Configuration">
+                        <setting help="Automatically create work orders when service request is confirmed">
+                            <field name="technical_service_auto_create_work_order"/>
+                        </setting>
+                        <setting help="Send email notifications to customers on status changes">
+                            <field name="technical_service_notify_customer"/>
+                        </setting>
+                        <setting string="Request Email Template" help="Email template for new service requests">
+                            <field name="technical_service_request_email_template_id"/>
+                        </setting>
+                    </block>
+
+                    <block title="SLA Management">
+                        <setting string="Enable SLA" help="Enable Service Level Agreement management">
+                            <field name="module_technical_service_sla"/>
+                        </setting>
+                        <setting string="SLA Warning Hours" help="Hours before SLA deadline to show warning">
+                            <field name="technical_service_default_sla_warning_hours"/>
+                        </setting>
+                    </block>
+
+                    <block title="Work Order Configuration">
+                        <setting help="Automatically assign work orders based on technician workload">
+                            <field name="technical_service_auto_assign_work_order"/>
+                        </setting>
+                        <setting string="Default Duration" help="Default duration for new work orders (hours)">
+                            <field name="technical_service_default_work_duration"/>
+                        </setting>
+                        <setting help="Send email notifications to technicians on new assignments">
+                            <field name="technical_service_notify_technician"/>
+                        </setting>
+                    </block>
+
+                    <block title="Asset Management">
+                        <setting help="Keep history of all changes to assets">
+                            <field name="technical_service_track_asset_history"/>
+                        </setting>
+                        <setting string="Preventive Maintenance Reminder" help="Days before next maintenance to send reminder">
+                            <field name="technical_service_preventive_maintenance_days"/>
+                        </setting>
+                    </block>
+
+                    <block title="Team Assignment">
+                        <setting string="Assignment Method" help="Method for assigning service requests to teams">
+                            <field name="technical_service_team_assignment_method" widget="radio"/>
+                        </setting>
+                    </block>
+
+                    <block title="Reports">
+                        <setting help="Include internal notes when generating service reports">
+                            <field name="technical_service_include_internal_notes"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Action to open settings -->
+    <record id="action_technical_service_config" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'technical_service'}</field>
+    </record>
+
+    <!-- Menu item for settings -->
+    <menuitem id="menu_technical_service_settings"
+              name="Settings"
+              parent="technical_service.menu_configuration"
+              action="action_technical_service_config"
+              sequence="100"
+              groups="base.group_system"/>
+</odoo>

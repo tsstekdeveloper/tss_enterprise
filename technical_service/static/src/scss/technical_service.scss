@@ -1,0 +1,268 @@
+// Technical Service Module - Responsive Styles
+// Compatible with Odoo 18 and Bootstrap 5
+
+.o_technical_service_kanban {
+    // Dashboard Kanban Cards
+    .o_kanban_record {
+        @media (max-width: 768px) {
+            width: 100% !important;
+            margin: 0.5rem 0;
+        }
+
+        .o_kanban_card_header {
+            .o_kanban_card_header_title {
+                .o_primary {
+                    font-size: 1rem;
+                    font-weight: 600;
+                }
+
+                .o_secondary {
+                    margin-top: 0.25rem;
+                }
+            }
+        }
+
+        .o_kanban_card_content {
+            padding: 1rem;
+
+            .row {
+                margin-bottom: 0.5rem;
+            }
+        }
+    }
+
+    // Mobile optimizations
+    @media (max-width: 576px) {
+        .o_kanban_card_content {
+            .col-6 {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+    }
+}
+
+// Dashboard specific styles
+.o_kanban_dashboard {
+    .o_kanban_record {
+        min-height: 200px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        transition: box-shadow 0.3s;
+
+        &:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.16);
+        }
+
+        .o_kanban_record_top {
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .o_kanban_record_title {
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+
+        .o_kanban_primary_left,
+        .o_kanban_primary_right {
+            text-align: center;
+
+            .btn {
+                width: 100%;
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+// Form view responsive improvements
+.o_form_view {
+    @media (max-width: 768px) {
+        .o_group {
+            .o_group_col_6 {
+                width: 100% !important;
+            }
+        }
+
+        .o_notebook {
+            .nav-tabs {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+
+                .nav-link {
+                    white-space: nowrap;
+                }
+            }
+        }
+    }
+}
+
+// List view mobile optimizations
+.o_list_view {
+    @media (max-width: 768px) {
+        table {
+            font-size: 0.875rem;
+        }
+
+        th, td {
+            padding: 0.5rem 0.25rem;
+        }
+
+        // Hide less important columns on mobile
+        .o_list_number_th,
+        .o_list_button {
+            display: none;
+        }
+    }
+}
+
+// Calendar view improvements
+.o_calendar_view {
+    @media (max-width: 768px) {
+        .fc-toolbar {
+            flex-direction: column;
+
+            .fc-toolbar-chunk {
+                margin: 0.25rem 0;
+            }
+        }
+
+        .fc-event {
+            font-size: 0.75rem;
+        }
+    }
+}
+
+// SLA Status badges
+.o_field_badge {
+    &[data-value="breached"] {
+        background-color: #dc3545 !important;
+        color: white !important;
+    }
+
+    &[data-value="at_risk"] {
+        background-color: #ffc107 !important;
+        color: #212529 !important;
+    }
+
+    &[data-value="on_track"] {
+        background-color: #28a745 !important;
+        color: white !important;
+    }
+}
+
+// Priority level badges
+.o_priority_badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+
+    &.p1 {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    &.p2 {
+        background-color: #fd7e14;
+        color: white;
+    }
+
+    &.p3 {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    &.p4 {
+        background-color: #17a2b8;
+        color: white;
+    }
+}
+
+// Work status badges
+.o_work_status_badge {
+    &[data-value="pending"] {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    &[data-value="in_progress"] {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+    &[data-value="paused"] {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    &[data-value="completed"] {
+        background-color: #28a745;
+        color: white;
+    }
+}
+
+// Graph and Pivot view improvements
+.o_graph_view,
+.o_pivot_view {
+    @media (max-width: 768px) {
+        .o_graph_canvas_container {
+            overflow-x: auto;
+        }
+
+        table {
+            min-width: 600px;
+        }
+    }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+    .o_technical_service_kanban {
+        .o_kanban_record {
+            background-color: #2b2b2b;
+            color: #e0e0e0;
+
+            .o_kanban_record_title {
+                color: #e0e0e0;
+            }
+        }
+    }
+
+    .o_kanban_dashboard {
+        .o_kanban_record {
+            background-color: #2b2b2b;
+            border-color: #404040;
+
+            .o_kanban_record_top {
+                border-color: #404040;
+            }
+        }
+    }
+}
+
+// Utility classes for mobile
+@media (max-width: 576px) {
+    .mobile-hide {
+        display: none !important;
+    }
+
+    .mobile-full-width {
+        width: 100% !important;
+    }
+}
+
+// Improved touch targets for mobile
+@media (pointer: coarse) {
+    .o_kanban_record,
+    .btn,
+    .o_list_view tbody tr {
+        min-height: 44px;
+    }
+
+    .o_field_widget input,
+    .o_field_widget select {
+        min-height: 44px;
+        padding: 0.5rem;
+    }
+}

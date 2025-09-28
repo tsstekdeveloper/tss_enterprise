@@ -1,0 +1,252 @@
+/* Technical Service - Custom Form Button Styles - Complete Override */
+
+.o_form_view {
+    /* Complete override for Save button */
+    .o_form_button_save {
+        background-color: #28a745 !important;
+        border-color: #28a745 !important;
+        color: white !important;
+        font-weight: 600 !important;
+        padding: 8px 20px !important;
+        border-radius: 5px !important;
+        transition: all 0.3s ease !important;
+        position: relative !important;
+        min-width: 120px !important;
+        min-height: 36px !important;
+
+        /* Hide ALL Odoo content - icons, text, everything */
+        * {
+            display: none !important;
+        }
+
+        /* Hide any Font Awesome icons */
+        i, span, svg {
+            display: none !important;
+        }
+
+        /* Remove any text content */
+        text-indent: -9999px !important;
+        font-size: 0 !important;
+        line-height: 0 !important;
+
+        /* Our custom text using ::after */
+        &::after {
+            content: "KAYDET" !important;
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            text-indent: 0 !important;
+            line-height: normal !important;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            display: block !important;
+            visibility: visible !important;
+            color: white !important;
+        }
+
+        &:hover:not(:disabled) {
+            background-color: #218838 !important;
+            border-color: #1e7e34 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3) !important;
+        }
+
+        &:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2) !important;
+        }
+
+        &:disabled {
+            opacity: 0.65 !important;
+            cursor: not-allowed !important;
+        }
+
+        /* Loading state */
+        &.o_loading {
+            &::after {
+                content: "Kaydediliyor..." !important;
+            }
+        }
+
+        /* Success state */
+        &.o_saved {
+            animation: saveSuccess 0.5s ease-in-out;
+            &::after {
+                content: "KAYDEDİLDİ!" !important;
+            }
+        }
+    }
+
+    /* Complete override for Cancel button */
+    .o_form_button_cancel {
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+        color: white !important;
+        font-weight: 600 !important;
+        padding: 8px 20px !important;
+        border-radius: 5px !important;
+        transition: all 0.3s ease !important;
+        margin-left: 10px !important;
+        position: relative !important;
+        min-width: 120px !important;
+        min-height: 36px !important;
+
+        /* Hide ALL Odoo content - icons, text, everything */
+        * {
+            display: none !important;
+        }
+
+        /* Hide any Font Awesome icons */
+        i, span, svg {
+            display: none !important;
+        }
+
+        /* Remove any text content */
+        text-indent: -9999px !important;
+        font-size: 0 !important;
+        line-height: 0 !important;
+
+        /* Our custom text using ::after */
+        &::after {
+            content: "İPTAL" !important;
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            text-indent: 0 !important;
+            line-height: normal !important;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            display: block !important;
+            visibility: visible !important;
+            color: white !important;
+        }
+
+        &:hover:not(:disabled) {
+            background-color: #c82333 !important;
+            border-color: #bd2130 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3) !important;
+        }
+
+        &:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2) !important;
+        }
+
+        &:disabled {
+            opacity: 0.65 !important;
+            cursor: not-allowed !important;
+        }
+
+        /* Loading state */
+        &.o_loading {
+            &::after {
+                content: "İptal ediliyor..." !important;
+            }
+        }
+    }
+}
+
+/* Override for statusbar buttons specifically */
+.o_form_statusbar {
+    .o_form_button_save,
+    .o_form_button_cancel {
+        /* Force hide Font Awesome icons */
+        &::before {
+            display: none !important;
+            content: none !important;
+        }
+
+        /* Hide any nested icons */
+        .fa, .oi, .o_button_icon {
+            display: none !important;
+        }
+    }
+}
+
+/* Remove Odoo's native tooltips completely */
+.o_form_view {
+    .o_form_button_save,
+    .o_form_button_cancel {
+        &[title],
+        &[data-tooltip],
+        &[data-bs-toggle] {
+            &::before,
+            &::after {
+                pointer-events: none !important;
+            }
+        }
+
+        /* Remove title attribute to prevent browser tooltips */
+        &[title] {
+            pointer-events: auto !important;
+            position: relative !important;
+        }
+    }
+}
+
+/* Animation for save success */
+@keyframes saveSuccess {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+        background-color: #1e7e34;
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .o_form_view {
+        .o_form_button_save,
+        .o_form_button_cancel {
+            padding: 10px 15px !important;
+            min-width: 100px !important;
+
+            &::after {
+                font-size: 13px !important;
+            }
+        }
+    }
+}
+
+/* Prevent any flickering on hover */
+.o_form_view {
+    .o_form_button_save,
+    .o_form_button_cancel {
+        -webkit-transform: translateZ(0);
+        -webkit-backface-visibility: hidden;
+        -webkit-perspective: 1000px;
+        backface-visibility: hidden;
+        perspective: 1000px;
+        overflow: hidden !important;
+    }
+}
+
+/* Extra specificity to override Odoo defaults */
+.o_content .o_form_view {
+    .o_form_statusbar {
+        .o_statusbar_buttons {
+            .o_form_button_save,
+            .o_form_button_cancel {
+                /* Remove any inline styles */
+                font-family: inherit !important;
+
+                /* Ensure our text shows */
+                &::after {
+                    z-index: 10 !important;
+                }
+            }
+        }
+    }
+}

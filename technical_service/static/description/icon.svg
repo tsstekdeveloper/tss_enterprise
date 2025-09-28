@@ -1,0 +1,10 @@
+<svg width="70" height="70" viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg">
+    <rect width="70" height="70" rx="8" fill="#2E5266"/>
+    <g transform="translate(10,10)" fill="#FFFFFF">
+        <!-- Gear icon -->
+        <path d="M25 10 L28 15 L33 12 L35 18 L40 20 L35 22 L33 28 L28 25 L25 30 L22 25 L17 28 L15 22 L10 20 L15 18 L17 12 L22 15 Z" opacity="0.9"/>
+        <!-- Wrench icon overlay -->
+        <rect x="22" y="18" width="6" height="20" rx="1" transform="rotate(-45 25 25)"/>
+        <circle cx="18" cy="32" r="3"/>
+    </g>
+</svg>

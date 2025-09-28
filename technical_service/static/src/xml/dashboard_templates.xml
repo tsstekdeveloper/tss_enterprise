@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="technical_service_templates" xml:space="preserve">
+
+    <!-- Technical Service Dashboard Template -->
+    <t t-name="technical_service.Dashboard" owl="1">
+        <div class="o_technical_service_dashboard">
+            <div class="container-fluid">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <h2 class="text-center">Technical Service Dashboard</h2>
+                    </div>
+                </div>
+
+                <div t-if="state.loading" class="text-center p-5">
+                    <i class="fa fa-spinner fa-spin fa-3x"/>
+                    <p>Loading dashboard data...</p>
+                </div>
+
+                <div t-else="" class="row">
+                    <!-- KPI Cards -->
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h3 class="text-primary" t-esc="state.openRequests"/>
+                                <p class="card-text">Open Requests</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h3 class="text-danger" t-esc="state.criticalRequests"
+                                    t-on-click="viewCriticalRequests"
+                                    style="cursor: pointer;"/>
+                                <p class="card-text">Critical Issues</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h3 class="text-warning" t-esc="state.slaBreached"
+                                    t-on-click="viewSLABreachedRequests"
+                                    style="cursor: pointer;"/>
+                                <p class="card-text">SLA Breached</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h3 class="text-success" t-esc="state.slaCompliance + '%'"/>
+                                <p class="card-text">SLA Compliance</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-12 text-end">
+                        <button class="btn btn-sm btn-secondary" t-on-click="refreshDashboard">
+                            <i class="fa fa-refresh"/> Refresh
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- SLA Timer Widget Template -->
+    <t t-name="technical_service.SLATimer" owl="1">
+        <div class="o_sla_timer_widget">
+            <span t-attf-class="badge #{state.status === 'breached' ? 'bg-danger' : state.status === 'at_risk' ? 'bg-warning' : 'bg-success'}">
+                <i class="fa fa-clock-o me-1"/>
+                <span t-esc="state.timeRemaining"/>
+            </span>
+        </div>
+    </t>
+
+    <!-- Team Workload Chart Template -->
+    <t t-name="technical_service.TeamWorkloadChart" owl="1">
+        <div class="o_team_workload_chart">
+            <canvas id="teamWorkloadChart" style="max-height: 400px;"/>
+        </div>
+    </t>
+
+    <!-- Quick Create Request Template -->
+    <t t-name="technical_service.QuickCreateRequest" owl="1">
+        <div class="o_quick_create_request card">
+            <div class="card-header">
+                <h5>Quick Create Request</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Type</label>
+                    <select class="form-select" t-model="state.requestType">
+                        <option value="incident">Incident</option>
+                        <option value="service_request">Service Request</option>
+                        <option value="problem">Problem</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Priority</label>
+                    <select class="form-select" t-model="state.priority">
+                        <option value="p1">P1 - Critical</option>
+                        <option value="p2">P2 - High</option>
+                        <option value="p3">P3 - Medium</option>
+                        <option value="p4">P4 - Low</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" rows="3"
+                              t-model="state.description"
+                              placeholder="Describe the issue..."/>
+                </div>
+
+                <button class="btn btn-primary w-100" t-on-click="createRequest">
+                    <i class="fa fa-plus"/> Create Request
+                </button>
+            </div>
+        </div>
+    </t>
+
+</templates>

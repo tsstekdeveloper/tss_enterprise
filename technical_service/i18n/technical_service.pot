@@ -1,0 +1,248 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* technical_service
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-09-21 10:00:00\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. module: technical_service
+#: model:ir.module.module,name:technical_service.module_technical_service
+msgid "Technical Service Management"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.module.module,summary:technical_service.module_technical_service
+msgid "Manage technical services, work orders, and maintenance requests"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_technical_service_root
+msgid "Technical Service"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_service_management
+msgid "Service Management"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_service_request
+msgid "Service Requests"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_work_order
+msgid "Work Orders"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_asset_management
+msgid "Asset Management"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_asset
+msgid "Assets/Equipment"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_maintenance_contract
+msgid "Maintenance Contracts"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_configuration
+msgid "Configuration"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_campus
+msgid "Campuses"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_building
+msgid "Buildings"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_sla_policy
+msgid "SLA Policies"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.ui.menu,name:technical_service.menu_service_team
+msgid "Service Teams"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_request_number
+msgid "Request Number"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_request_type
+msgid "Request Type"
+msgstr ""
+
+#. module: technical_service
+#: selection:maintenance.request,x_request_type:0
+msgid "Incident"
+msgstr ""
+
+#. module: technical_service
+#: selection:maintenance.request,x_request_type:0
+msgid "Service Request"
+msgstr ""
+
+#. module: technical_service
+#: selection:maintenance.request,x_request_type:0
+msgid "Problem"
+msgstr ""
+
+#. module: technical_service
+#: selection:maintenance.request,x_request_type:0
+msgid "Change Request"
+msgstr ""
+
+#. module: technical_service
+#: selection:maintenance.request,x_request_type:0
+msgid "Preventive Maintenance"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_impact
+msgid "Impact"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_urgency
+msgid "Urgency"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_request__x_priority_level
+msgid "Priority Level"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model,name:technical_service.model_technical_service_work_order
+msgid "Work Orders"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order__name
+msgid "Title"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order__x_work_type
+msgid "Work Type"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order__x_work_status
+msgid "Work Status"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_work_order__x_technician_id
+msgid "Technician"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model,name:technical_service.model_technical_service_contract
+msgid "Maintenance Contract"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_contract__name
+msgid "Contract Number"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_contract__partner_id
+msgid "Customer"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model,name:technical_service.model_technical_service_campus
+msgid "Campus"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model,name:technical_service.model_technical_service_building
+msgid "Building"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model,name:technical_service.model_technical_service_sla
+msgid "SLA Policy"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_sla__x_apply_to
+msgid "Apply To"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_sla__x_business_hours_start
+msgid "Business Hours Start"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_technical_service_sla__x_business_hours_end
+msgid "Business Hours End"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_team__x_specialization
+msgid "Specialization"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_team__x_member_count
+msgid "Member Count"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model.fields,field_description:technical_service.field_maintenance_team__x_active_requests
+msgid "Active Requests"
+msgstr ""
+
+#. module: technical_service
+#: code:addons/technical_service/models/technical_service_work_order.py:0
+#, python-format
+msgid "Start Work"
+msgstr ""
+
+#. module: technical_service
+#: code:addons/technical_service/models/technical_service_work_order.py:0
+#, python-format
+msgid "Complete Work"
+msgstr ""
+
+#. module: technical_service
+#: code:addons/technical_service/models/technical_service_request.py:0
+#, python-format
+msgid "SLA deadline is approaching!"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.actions.report,name:technical_service.report_work_order
+msgid "Work Order Report"
+msgstr ""
+
+#. module: technical_service
+#: model:ir.model.fields,help:technical_service.field_maintenance_request__x_priority_level
+msgid "Priority is calculated based on Impact x Urgency matrix"
+msgstr ""
