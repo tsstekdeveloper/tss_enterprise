@@ -51,6 +51,7 @@
         'views/technical_service_asset_views.xml',
         'views/technical_service_location_views.xml',
         'views/technical_service_sla_views.xml',
+        'views/technical_service_preventive_views.xml',  # Add preventive maintenance views
         'views/technical_service_dashboard.xml',
         'views/technical_service_reports.xml',
         'views/technical_service_menu.xml',  # Menu definitions must be loaded first

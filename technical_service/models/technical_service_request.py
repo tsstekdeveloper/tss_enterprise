@@ -83,6 +83,10 @@ class TechnicalServiceRequest(models.Model):
     x_room = fields.Char(string='Room/Location')
     x_location_details = fields.Text(string='Location Details')
 
+    # Material Request Fields
+    x_requires_material = fields.Boolean(string='Requires Material', default=False)
+    x_material_list = fields.Text(string='Required Materials')
+
     # SLA Management
     x_sla_policy_id = fields.Many2one('technical_service.sla', string='SLA Policy')
     x_response_deadline = fields.Datetime(string='Response Deadline', compute='_compute_sla_deadlines', store=True)
@@ -100,6 +104,10 @@ class TechnicalServiceRequest(models.Model):
 
     # Technician assignment field (for compatibility with maintenance module)
     technician_user_id = fields.Many2one('res.users', string='Technician', tracking=True)
+
+    # Department field for organizational structure
+    x_department_id = fields.Many2one('hr.department', string='Department',
+                                     compute='_compute_department', store=True)
 
     # Extended Status Management
     x_status_detail = fields.Selection([
@@ -351,3 +359,14 @@ class TechnicalServiceRequest(models.Model):
                 body=_(f"Request escalated to level {self.x_escalation_level}"),
                 partner_ids=[self.maintenance_team_id.manager_id.partner_id.id]
             )
+
+    @api.depends('create_uid', 'employee_id')
+    def _compute_department(self):
+        """Compute department from request creator or assigned employee"""
+        for record in self:
+            if record.employee_id and record.employee_id.department_id:
+                record.x_department_id = record.employee_id.department_id
+            elif record.create_uid and record.create_uid.employee_id:
+                record.x_department_id = record.create_uid.employee_id.department_id
+            else:
+                record.x_department_id = False
