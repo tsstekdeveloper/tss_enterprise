@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ============================================ -->
+        <!-- ACTIONS FOR MENU ITEMS                       -->
+        <!-- ============================================ -->
+
+        <!-- SERVICE REQUEST ACTIONS -->
+
+        <!-- My Requests -->
+        <record id="action_maintenance_request_my" model="ir.actions.act_window">
+            <field name="name">Taleplerim</field>
+            <field name="res_model">maintenance.request</field>
+            <field name="view_mode">list,kanban,form,calendar,pivot</field>
+            <field name="domain">[('create_uid', '=', uid)]</field>
+            <field name="context">{'search_default_my_requests': 1}</field>
+        </record>
+
+        <!-- Department Requests - Dynamic domain based on user -->
+        <record id="action_maintenance_request_team" model="ir.actions.act_window">
+            <field name="name">Departman Talepleri</field>
+            <field name="res_model">maintenance.request</field>
+            <field name="view_mode">list,kanban,form,calendar,pivot</field>
+            <!-- Dynamic domain that filters based on employee hierarchy -->
+            <field name="domain">['|',
+                ('employee_id.user_id', '=', uid),
+                ('employee_id.parent_id.user_id', '=', uid)
+            ]</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Departman taleplerini görüntülemek için
+                </p>
+                <p>Bu listede sizin ve yönettiğiniz kişilerin talepleri görüntülenir</p>
+            </field>
+        </record>
+
+        <!-- Assigned Requests - All requests with assigned technician -->
+        <record id="action_maintenance_request_assigned" model="ir.actions.act_window">
+            <field name="name">Atanmış Talepler</field>
+            <field name="res_model">maintenance.request</field>
+            <field name="view_mode">list,kanban,form,calendar</field>
+            <field name="domain">[('technician_user_id', '!=', False)]</field>
+            <field name="context">{'search_default_assigned_to_me': 1}</field>
+        </record>
+
+        <!-- Assigned to Me Requests - Only requests assigned to current user -->
+        <record id="action_maintenance_request_assigned_to_me" model="ir.actions.act_window">
+            <field name="name">Bana Atanmış Talepler</field>
+            <field name="res_model">maintenance.request</field>
+            <field name="view_mode">list,kanban,form,calendar</field>
+            <field name="domain">[('technician_user_id', '=', uid)]</field>
+            <field name="context">{'search_default_assigned_to_me': 1}</field>
+        </record>
+
+        <!-- Pending Requests - Unassigned requests only -->
+        <record id="action_maintenance_request_pending" model="ir.actions.act_window">
+            <field name="name">Bekleyen Talepler</field>
+            <field name="res_model">maintenance.request</field>
+            <field name="view_mode">list,kanban,form</field>
+            <field name="domain">[('technician_user_id', '=', False)]</field>
+            <field name="context">{'search_default_pending': 1}</field>
+        </record>
+
+        <!-- WORK ORDER ACTIONS -->
+
+        <!-- My Work Orders -->
+        <record id="action_work_order_my" model="ir.actions.act_window">
+            <field name="name">İş Emirlerim</field>
+            <field name="res_model">technical_service.work_order</field>
+            <field name="view_mode">list,kanban,form,calendar</field>
+            <field name="domain">[('x_technician_user_id', '=', uid)]</field>
+        </record>
+
+        <!-- Team Work Orders -->
+        <record id="action_work_order_team" model="ir.actions.act_window">
+            <field name="name">Ekip İş Emirleri</field>
+            <field name="res_model">technical_service.work_order</field>
+            <field name="view_mode">list,kanban,form,calendar</field>
+            <field name="domain">[('team_id', 'in', user.technical_org_id.team_ids.ids)]</field>
+        </record>
+
+        <!-- All Work Orders -->
+        <record id="action_work_order_all" model="ir.actions.act_window">
+            <field name="name">Tüm İş Emirleri</field>
+            <field name="res_model">technical_service.work_order</field>
+            <field name="view_mode">list,kanban,form,calendar,pivot,graph</field>
+        </record>
+
+        <!-- INVENTORY ACTIONS -->
+
+        <!-- Inventory Stock -->
+        <record id="action_inventory_stock" model="ir.actions.act_window">
+            <field name="name">Stok Durumu</field>
+            <field name="res_model">stock.quant</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{}</field>
+        </record>
+
+        <!-- Material Requests -->
+        <record id="action_material_requests" model="ir.actions.act_window">
+            <field name="name">Malzeme Talepleri</field>
+            <field name="res_model">stock.picking</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'default_picking_type_id': 5}</field>
+        </record>
+
+        <!-- Fixed Assets -->
+        <record id="action_fixed_assets" model="ir.actions.act_window">
+            <field name="name">Demirbaşlar</field>
+            <field name="res_model">maintenance.equipment</field>
+            <field name="view_mode">list,kanban,form</field>
+            <field name="context">{}</field>
+        </record>
+
+        <!-- TEAM MANAGEMENT ACTIONS -->
+
+        <!-- Team Members -->
+        <record id="action_team_member" model="ir.actions.act_window">
+            <field name="name">Teknisyenler</field>
+            <field name="res_model">technical_service.team.member</field>
+            <field name="view_mode">list,kanban,form</field>
+        </record>
+
+        <!-- Team Shifts (placeholder) -->
+        <record id="action_team_shifts" model="ir.actions.act_window">
+            <field name="name">Vardiyalar</field>
+            <field name="res_model">technical_service.team.member</field>
+            <field name="view_mode">list,calendar</field>
+            <field name="context">{'default_shift_view': True}</field>
+        </record>
+
+        <!-- Team Performance (placeholder) -->
+        <record id="action_team_performance" model="ir.actions.act_window">
+            <field name="name">Performans</field>
+            <field name="res_model">maintenance.request</field>
+            <field name="view_mode">pivot,graph</field>
+            <field name="context">{'group_by': ['technician_user_id']}</field>
+        </record>
+
+        <!-- REPORT ACTIONS -->
+
+        <!-- Request Reports -->
+        <record id="action_report_requests" model="ir.actions.act_window">
+            <field name="name">Talep Raporları</field>
+            <field name="res_model">maintenance.request</field>
+            <field name="view_mode">pivot,graph,list</field>
+            <field name="context">{'search_default_group_by_stage': 1}</field>
+        </record>
+
+        <!-- Performance Reports -->
+        <record id="action_report_performance" model="ir.actions.act_window">
+            <field name="name">Performans Raporları</field>
+            <field name="res_model">maintenance.request</field>
+            <field name="view_mode">pivot,graph</field>
+            <field name="context">{'search_default_group_by_technician': 1}</field>
+        </record>
+
+        <!-- SLA Reports -->
+        <record id="action_report_sla" model="ir.actions.act_window">
+            <field name="name">SLA Raporları</field>
+            <field name="res_model">technical_service.sla</field>
+            <field name="view_mode">pivot,graph,list</field>
+        </record>
+
+        <!-- Inventory Reports -->
+        <record id="action_report_inventory" model="ir.actions.act_window">
+            <field name="name">Envanter Raporları</field>
+            <field name="res_model">stock.quant</field>
+            <field name="view_mode">pivot,list</field>
+            <field name="context">{'search_default_internal_loc': 1}</field>
+        </record>
+
+        <!-- Cost Reports -->
+        <record id="action_report_costs" model="ir.actions.act_window">
+            <field name="name">Maliyet Raporları</field>
+            <field name="res_model">maintenance.request</field>
+            <field name="view_mode">pivot,graph,list</field>
+            <field name="context">{'search_default_group_by_maintenance_type': 1}</field>
+        </record>
+
+        <!-- CONFIG ACTIONS -->
+
+        <!-- SLA Policies -->
+        <record id="action_sla_policies" model="ir.actions.act_window">
+            <field name="name">SLA Politikaları</field>
+            <field name="res_model">technical_service.sla</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <!-- Location Area -->
+        <record id="action_technical_service_area" model="ir.actions.act_window">
+            <field name="name">Alanlar</field>
+            <field name="res_model">technical_service.campus</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'default_view_areas': True}</field>
+        </record>
+
+        <!-- Team Requests Action - New -->
+        <record id="action_team_requests_by_stage" model="ir.actions.act_window">
+            <field name="name">Ekip Talepleri</field>
+            <field name="res_model">maintenance.request</field>
+            <field name="view_mode">kanban,list,form</field>
+            <field name="domain">[('maintenance_team_id', '=', active_id)]</field>
+            <field name="context">{'default_group_by': 'stage_id'}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Bu ekibe henüz talep atanmamış
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

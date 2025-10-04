@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ============================================ -->
+        <!-- ROOT MENU - Technical Service Management     -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_technical_service_root"
+                  name="Teknik Talep Yonetimi"
+                  sequence="5"
+                  web_icon="technical_service,static/description/icon.png"/>
+
+        <!-- ============================================ -->
+        <!-- DASHBOARD MENUS                              -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_dashboard"
+                  name="Dashboard"
+                  parent="menu_technical_service_root"
+                  sequence="10"/>
+
+        <menuitem id="menu_dashboard_my"
+                  name="Benim Dashboard'im"
+                  parent="menu_dashboard"
+                  action="technical_service.action_technical_service_dashboard"
+                  sequence="10"/>
+
+        <menuitem id="menu_dashboard_team"
+                  name="Ekip Dashboard'i"
+                  parent="menu_dashboard"
+                  action="technical_service.action_technical_service_team_dashboard"
+                  groups="hr.group_hr_manager,technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader"
+                  sequence="20"/>
+
+        <menuitem id="menu_dashboard_management"
+                  name="Yonetim Dashboard'i"
+                  parent="menu_dashboard"
+                  action="technical_service.action_management_dashboard"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager"
+                  sequence="30"/>
+
+        <!-- ============================================ -->
+        <!-- SERVICE REQUESTS MENUS                       -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_service_requests"
+                  name="Servis Talepleri"
+                  parent="menu_technical_service_root"
+                  sequence="20"/>
+
+        <!-- Removed as per requirement - Task 02
+        <menuitem id="menu_request_new"
+                  name="Yeni Talep Olustur"
+                  parent="menu_service_requests"
+                  action="technical_service.action_technical_service_request"
+                  sequence="10"/>
+        -->
+
+        <menuitem id="menu_request_my"
+                  name="Taleplerim"
+                  parent="menu_service_requests"
+                  action="technical_service.action_maintenance_request_my"
+                  sequence="20"/>
+
+        <menuitem id="menu_request_team"
+                  name="Departman Talepleri"
+                  parent="menu_service_requests"
+                  action="technical_service.action_maintenance_request_team"
+                  groups="hr.group_hr_manager,technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader"
+                  sequence="30"/>
+
+        <menuitem id="menu_request_assigned"
+                  name="Atanmis Talepler"
+                  parent="menu_service_requests"
+                  action="technical_service.action_maintenance_request_assigned"
+                  groups="technical_service_presentation.group_technical_technician,technical_service_presentation.group_technical_senior_technician,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_cto"
+                  sequence="40"/>
+
+        <menuitem id="menu_request_assigned_to_me"
+                  name="Bana Atanmis Talepler"
+                  parent="menu_service_requests"
+                  action="technical_service.action_maintenance_request_assigned_to_me"
+                  groups="technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_senior_technician,technical_service_presentation.group_technical_technician,technical_service_presentation.group_technical_dispatcher"
+                  sequence="43"/>
+
+        <menuitem id="menu_request_pending"
+                  name="Bekleyen Talepler"
+                  parent="menu_service_requests"
+                  action="technical_service.action_maintenance_request_pending"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_dispatcher"
+                  sequence="45"/>
+
+        <!-- CTO needs access to all requests -->
+        <menuitem id="menu_request_all"
+                  name="Tum Talepler"
+                  parent="menu_service_requests"
+                  action="technical_service.action_maintenance_request_all"
+                  groups="technical_service_presentation.group_technical_cto"
+                  sequence="50"/>
+
+        <!-- ============================================ -->
+        <!-- WORK ORDERS MENUS                            -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_work_orders"
+                  name="Is Emirleri"
+                  parent="menu_technical_service_root"
+                  sequence="30"/>
+
+        <!-- New Work Order for CTO -->
+        <menuitem id="menu_work_order_new"
+                  name="Yeni Is Emri"
+                  parent="menu_work_orders"
+                  action="technical_service.action_work_order_new"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader"
+                  sequence="5"/>
+
+        <menuitem id="menu_work_order_my"
+                  name="Is Emirlerim"
+                  parent="menu_work_orders"
+                  action="technical_service.action_work_order_my"
+                  groups="technical_service_presentation.group_technical_technician,technical_service_presentation.group_technical_senior_technician,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_cto"
+                  sequence="10"/>
+
+        <menuitem id="menu_work_order_team"
+                  name="Ekip Is Emirleri"
+                  parent="menu_work_orders"
+                  action="technical_service.action_work_order_team"
+                  groups="technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_cto"
+                  sequence="20"/>
+
+        <menuitem id="menu_work_order_all"
+                  name="Tum Is Emirleri"
+                  parent="menu_work_orders"
+                  action="technical_service.action_work_order_all"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_dispatcher"
+                  sequence="30"/>
+
+        <!-- ============================================ -->
+        <!-- ASSETS MENUS                                 -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_assets"
+                  name="Cihazlar ve Varliklar"
+                  parent="menu_technical_service_root"
+                  sequence="40"/>
+
+        <menuitem id="menu_assets_equipment"
+                  name="Ekipmanlar"
+                  parent="menu_assets"
+                  action="technical_service.action_technical_service_asset"
+                  sequence="10"/>
+
+        <menuitem id="menu_assets_contracts"
+                  name="Sozlesmeler"
+                  parent="menu_assets"
+                  action="technical_service.action_technical_service_contract"
+                  groups="technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_cto"
+                  sequence="20"/>
+
+        <menuitem id="menu_assets_preventive"
+                  name="Onleyici Bakim"
+                  parent="menu_assets"
+                  action="technical_service.action_technical_service_preventive"
+                  groups="technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_cto"
+                  sequence="30"/>
+
+        <!-- ============================================ -->
+        <!-- TEAM MANAGEMENT MENUS                        -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_team_management"
+                  name="Ekip Yonetimi"
+                  parent="menu_technical_service_root"
+                  groups="technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_cto"
+                  sequence="50"/>
+
+        <menuitem id="menu_team_members"
+                  name="Teknisyenler"
+                  parent="menu_team_management"
+                  action="technical_service.action_team_member"
+                  sequence="10"/>
+
+        <menuitem id="menu_team_shifts"
+                  name="Vardiyalar"
+                  parent="menu_team_management"
+                  action="technical_service.action_team_shifts"
+                  sequence="20"/>
+
+        <menuitem id="menu_team_performance"
+                  name="Performans"
+                  parent="menu_team_management"
+                  action="technical_service.action_team_performance"
+                  sequence="30"/>
+
+        <menuitem id="menu_teams"
+                  name="Ekipler"
+                  parent="menu_team_management"
+                  action="technical_service.action_technical_service_team"
+                  sequence="40"/>
+
+        <!-- ============================================ -->
+        <!-- TECHNICAL ORGANIZATION MENUS                 -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_technical_organization"
+                  name="Teknik Organizasyon"
+                  parent="menu_technical_service_root"
+                  groups="technical_service_presentation.group_technical_cto"
+                  sequence="60"/>
+
+        <menuitem id="menu_organization_structure"
+                  name="Organizasyon Yapisi"
+                  parent="menu_technical_organization"
+                  action="technical_service.action_organization_structure_placeholder"
+                  sequence="10"/>
+
+        <menuitem id="menu_organization_positions"
+                  name="Pozisyonlar"
+                  parent="menu_technical_organization"
+                  action="technical_service.action_technical_service_organization"
+                  sequence="20"/>
+
+        <menuitem id="menu_organization_assignments"
+                  name="Rol Atamalari"
+                  parent="menu_technical_organization"
+                  action="technical_service.action_role_assignments_placeholder"
+                  sequence="30"/>
+
+        <!-- ============================================ -->
+        <!-- LOCATION MANAGEMENT MENUS                    -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_location_management"
+                  name="Lokasyon Yonetimi"
+                  parent="menu_technical_service_root"
+                  groups="technical_service_presentation.group_technical_location_manager,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_cto"
+                  sequence="70"/>
+
+        <menuitem id="menu_location_campus"
+                  name="Kampusler"
+                  parent="menu_location_management"
+                  action="technical_service.action_technical_service_campus"
+                  sequence="10"/>
+
+        <menuitem id="menu_location_building"
+                  name="Binalar"
+                  parent="menu_location_management"
+                  action="technical_service.action_technical_service_building"
+                  sequence="20"/>
+
+        <menuitem id="menu_location_areas"
+                  name="Alanlar"
+                  parent="menu_location_management"
+                  action="technical_service.action_technical_service_area"
+                  sequence="30"/>
+
+        <!-- ============================================ -->
+        <!-- INVENTORY MENUS                              -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_inventory"
+                  name="Envanter"
+                  parent="menu_technical_service_root"
+                  groups="technical_service_presentation.group_technical_inventory_manager,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_cto"
+                  sequence="80"/>
+
+        <menuitem id="menu_inventory_stock"
+                  name="Stok Durumu"
+                  parent="menu_inventory"
+                  action="technical_service.action_inventory_stock"
+                  sequence="10"/>
+
+        <menuitem id="menu_inventory_requests"
+                  name="Malzeme Talepleri"
+                  parent="menu_inventory"
+                  action="technical_service.action_inventory_requests"
+                  sequence="20"/>
+
+        <menuitem id="menu_inventory_assets"
+                  name="Demirbaslar"
+                  parent="menu_inventory"
+                  action="technical_service.action_fixed_assets"
+                  sequence="30"/>
+
+        <!-- ============================================ -->
+        <!-- REPORTS MENUS                                -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_reports"
+                  name="Raporlar"
+                  parent="menu_technical_service_root"
+                  sequence="90"/>
+
+        <menuitem id="menu_report_requests"
+                  name="Talep Raporlari"
+                  parent="menu_reports"
+                  action="technical_service.action_report_requests"
+                  sequence="10"/>
+
+        <menuitem id="menu_report_performance"
+                  name="Performans Raporlari"
+                  parent="menu_reports"
+                  action="technical_service.action_report_performance"
+                  groups="technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_reporting"
+                  sequence="20"/>
+
+        <menuitem id="menu_report_sla"
+                  name="SLA Raporlari"
+                  parent="menu_reports"
+                  action="technical_service.action_report_sla"
+                  groups="technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_reporting"
+                  sequence="30"/>
+
+        <menuitem id="menu_report_inventory"
+                  name="Envanter Raporlari"
+                  parent="menu_reports"
+                  action="technical_service.action_report_inventory"
+                  groups="technical_service_presentation.group_technical_inventory_manager,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_reporting"
+                  sequence="40"/>
+
+        <menuitem id="menu_report_costs"
+                  name="Maliyet Raporlari"
+                  parent="menu_reports"
+                  action="technical_service.action_report_costs"
+                  groups="technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_reporting"
+                  sequence="50"/>
+
+        <!-- ============================================ -->
+        <!-- CONFIGURATION MENUS                          -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_configuration"
+                  name="Ayarlar"
+                  parent="menu_technical_service_root"
+                  groups="technical_service_presentation.group_technical_cto,base.group_system"
+                  sequence="100"/>
+
+        <menuitem id="menu_config_general"
+                  name="Genel Ayarlar"
+                  parent="menu_configuration"
+                  action="technical_service.action_technical_service_general_config"
+                  sequence="10"/>
+
+        <!-- User Management for CTO -->
+        <menuitem id="menu_config_users"
+                  name="Kullanici Yonetimi"
+                  parent="menu_configuration"
+                  action="technical_service.action_user_management"
+                  sequence="15"/>
+
+        <menuitem id="menu_config_sla"
+                  name="SLA Politikalari"
+                  parent="menu_configuration"
+                  action="technical_service.action_sla_policies"
+                  sequence="20"/>
+
+        <menuitem id="menu_config_priorities"
+                  name="Oncelik Seviyeleri"
+                  parent="menu_configuration"
+                  action="technical_service.action_technical_service_priority"
+                  sequence="30"/>
+
+        <menuitem id="menu_config_categories"
+                  name="Kategoriler"
+                  parent="menu_configuration"
+                  action="technical_service.action_technical_service_asset_analysis"
+                  sequence="40"/>
+
+    </data>
+</odoo>

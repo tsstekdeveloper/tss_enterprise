@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Placeholder Action for Organizasyon Yapisi -->
+        <record id="action_organization_structure_placeholder" model="ir.actions.client">
+            <field name="name">Organizasyon Yapısı</field>
+            <field name="tag">display_notification</field>
+            <field name="params" eval="{'title': 'Geliştirme Devam Ediyor', 'message': 'Organizasyon Yapısı modülü şu anda geliştirme aşamasındadır. Yakında kullanıma sunulacaktır.', 'type': 'info', 'sticky': True}"/>
+        </record>
+
+        <!-- Placeholder Action for Rol Atamalari -->
+        <record id="action_role_assignments_placeholder" model="ir.actions.client">
+            <field name="name">Rol Atamaları</field>
+            <field name="tag">display_notification</field>
+            <field name="params" eval="{'title': 'Geliştirme Devam Ediyor', 'message': 'Rol Atamaları modülü şu anda geliştirme aşamasındadır. Yakında kullanıma sunulacaktır.', 'type': 'info', 'sticky': True}"/>
+        </record>
+    </data>
+</odoo>

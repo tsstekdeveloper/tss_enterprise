@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Grant all technical service groups to admin user -->
+        <record id="base.user_admin" model="res.users">
+            <field name="groups_id" eval="[
+                (4, ref('technical_service_presentation.group_technical_cto')),
+                (4, ref('technical_service_presentation.group_technical_department_manager')),
+                (4, ref('technical_service_presentation.group_technical_team_leader')),
+                (4, ref('technical_service_presentation.group_technical_senior_technician')),
+                (4, ref('technical_service_presentation.group_technical_technician')),
+                (4, ref('technical_service_presentation.group_technical_dispatcher')),
+                (4, ref('technical_service_presentation.group_technical_location_manager')),
+                (4, ref('technical_service_presentation.group_technical_inventory_manager')),
+                (4, ref('maintenance.group_equipment_manager')),
+                (4, ref('technical_service.group_technical_organization_manager')),
+            ]"/>
+        </record>
+
+        <!-- Also create a technical organization position for admin as CTO -->
+        <record id="technical_org_admin_cto" model="technical_service.organization">
+            <field name="name">Chief Technology Officer</field>
+            <field name="organization_type">cto</field>
+            <field name="department_type">it</field>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>

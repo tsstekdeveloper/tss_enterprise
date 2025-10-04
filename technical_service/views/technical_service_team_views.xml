@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Maintenance Team Form View Inherit -->
+        <record id="view_maintenance_team_form_inherit" model="ir.ui.view">
+            <field name="name">maintenance.team.form.inherit.technical</field>
+            <field name="model">maintenance.team</field>
+            <field name="inherit_id" ref="maintenance.maintenance_team_view_form"/>
+            <field name="arch" type="xml">
+                <!-- Add team type and computed team leader after name -->
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="team_type" string="Ekip Tipi"/>
+                    <field name="team_leader_user_id" string="Takım Lideri" readonly="1" style="font-size: 16px; font-weight: bold;"/>
+                </xpath>
+
+                <!-- Hide the original member_ids field -->
+                <xpath expr="//field[@name='member_ids']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <!-- Add specialization and shift info in a new group -->
+                <xpath expr="//sheet" position="inside">
+                    <notebook>
+                        <page string="Teknik Detaylar" name="technical_details">
+                            <group>
+                                <group string="Uzmanlık Alanı">
+                                    <field name="x_specialization"/>
+                                    <field name="x_shift_type"/>
+                                    <field name="x_current_shift" invisible="x_shift_type != 'shift'"/>
+                                </group>
+                                <group string="Otomatik Atama">
+                                    <field name="x_auto_assign"/>
+                                    <field name="x_assignment_method" invisible="not x_auto_assign"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Üye Detayları" name="member_details">
+                            <field name="x_member_ids">
+                                <list editable="bottom">
+                                    <field name="employee_id"/>
+                                    <field name="user_id"/>
+                                    <field name="member_role"/>
+                                    <field name="x_skill_level"/>
+                                    <field name="x_availability_status"/>
+                                    <field name="x_shift"/>
+                                    <field name="x_is_available"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="İş Yükü" name="workload">
+                            <group>
+                                <field name="x_active_requests" readonly="1"/>
+                                <field name="x_pending_requests" readonly="1"/>
+                                <field name="x_avg_resolution_time" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Kapsama Alanları" name="coverage">
+                            <field name="x_campus_ids" widget="many2many_tags"/>
+                        </page>
+                    </notebook>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Maintenance Team List View Inherit -->
+        <record id="view_maintenance_team_list_inherit" model="ir.ui.view">
+            <field name="name">maintenance.team.list.inherit.technical</field>
+            <field name="model">maintenance.team</field>
+            <field name="inherit_id" ref="maintenance.maintenance_team_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="team_type"/>
+                    <field name="team_leader_user_id"/>
+                    <field name="x_specialization"/>
+                    <field name="x_member_count"/>
+                    <field name="x_active_requests"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Search View for Teams -->
+        <record id="view_maintenance_team_search_inherit" model="ir.ui.view">
+            <field name="name">maintenance.team.search.inherit.technical</field>
+            <field name="model">maintenance.team</field>
+            <field name="inherit_id" ref="maintenance.maintenance_team_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="inside">
+                    <separator/>
+                    <filter string="Operasyonel" name="operational"
+                            domain="[('team_type', '=', 'operational')]"/>
+                    <filter string="Dispatching" name="dispatching"
+                            domain="[('team_type', '=', 'dispatching')]"/>
+                    <filter string="Envanter" name="inventory"
+                            domain="[('team_type', '=', 'inventory')]"/>
+                    <filter string="Lokasyon" name="location"
+                            domain="[('team_type', '=', 'location')]"/>
+                    <separator/>
+                    <filter string="IT Ekipleri" name="it"
+                            domain="[('x_specialization', '=', 'it')]"/>
+                    <filter string="Elektrik Ekipleri" name="electrical"
+                            domain="[('x_specialization', '=', 'electrical')]"/>
+                    <filter string="Mekanik Ekipleri" name="mechanical"
+                            domain="[('x_specialization', '=', 'mechanical')]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Ekip Tipi" name="group_type"
+                                domain="[]" context="{'group_by':'team_type'}"/>
+                        <filter string="Uzmanlık" name="group_spec"
+                                domain="[]" context="{'group_by':'x_specialization'}"/>
+                        <filter string="Takım Lideri" name="group_leader"
+                                domain="[]" context="{'group_by':'team_leader_user_id'}"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Kanban View for Teams -->
+        <record id="view_maintenance_team_kanban" model="ir.ui.view">
+            <field name="name">maintenance.team.kanban.technical</field>
+            <field name="model">maintenance.team</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <field name="name"/>
+                    <field name="team_type"/>
+                    <field name="team_leader_user_id"/>
+                    <field name="x_specialization"/>
+                    <field name="x_member_count"/>
+                    <field name="x_active_requests"/>
+                    <field name="x_pending_requests"/>
+                    <field name="color"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_global_click">
+                                <div class="oe_kanban_details">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                    <button class="btn btn-link float-end"
+                                            name="%(technical_service.action_team_requests_by_stage)d"
+                                            type="action"
+                                            context="{'active_id': id}">
+                                        <i class="fa fa-arrow-right"/>
+                                    </button>
+                                    <div class="text-muted">
+                                        <t t-if="record.team_type.raw_value">
+                                            <field name="team_type" widget="badge"/>
+                                        </t>
+                                    </div>
+                                    <div t-if="record.team_leader_user_id.raw_value">
+                                        <i class="fa fa-user" title="Takım Lideri"/>
+                                        <field name="team_leader_user_id"/>
+                                    </div>
+                                    <div class="mt-2 mb-2">
+                                        <span class="badge text-bg-primary me-1">
+                                            <i class="fa fa-users"/> <field name="x_member_count"/> Üye
+                                        </span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <span class="badge text-bg-warning me-1" t-if="record.x_active_requests.raw_value > 0">
+                                            <i class="fa fa-tasks"/> <field name="x_active_requests"/> Devam Eden
+                                        </span>
+                                        <span class="badge text-bg-info me-1" t-if="record.x_pending_requests.raw_value > 0">
+                                            <i class="fa fa-clock-o"/> <field name="x_pending_requests"/> Bekleyen
+                                        </span>
+                                        <span class="badge text-bg-success" t-if="record.x_active_requests.raw_value == 0 and record.x_pending_requests.raw_value == 0">
+                                            <i class="fa fa-check"/> Aktif Talep Yok
+                                        </span>
+                                    </div>
+                                    <div t-if="record.x_specialization.raw_value">
+                                        <span class="text-muted">
+                                            <field name="x_specialization"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+    </data>
+</odoo>

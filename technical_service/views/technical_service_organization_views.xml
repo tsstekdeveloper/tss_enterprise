@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Form View for Technical Service Organization -->
+        <record id="view_technical_service_organization_form" model="ir.ui.view">
+            <field name="name">technical.service.organization.form</field>
+            <field name="model">technical_service.organization</field>
+            <field name="arch" type="xml">
+                <form string="Teknik Organizasyon Pozisyonu">
+                    <sheet>
+                        <widget name="web_ribbon" title="Pasif" bg_color="text-bg-danger" invisible="active"/>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_subordinates" type="object" class="oe_stat_button"
+                                    icon="fa-sitemap" invisible="child_count == 0">
+                                <field name="child_count" widget="statinfo" string="Alt Pozisyon"/>
+                            </button>
+                            <button name="action_view_teams" type="object" class="oe_stat_button"
+                                    icon="fa-users" invisible="not team_ids">
+                                <div class="o_stat_info">
+                                    <span class="o_stat_text">Takımlar</span>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" string="Pozisyon Adı"/>
+                            <h1>
+                                <field name="name" placeholder="ör. IT Müdürü"/>
+                            </h1>
+                            <label for="organization_type" string="Organizasyon Tipi"/>
+                            <h2>
+                                <field name="organization_type" placeholder="Pozisyon tipini seçin..."/>
+                            </h2>
+                        </div>
+                        <group>
+                            <group string="Kullanıcı Bilgileri">
+                                <field name="user_id" options="{'no_create': True}"/>
+                                <field name="employee_id" readonly="1"/>
+                                <field name="department_type"/>
+                            </group>
+                            <group string="Hiyerarşi">
+                                <field name="parent_id" options="{'no_create': True}"/>
+                                <field name="complete_name"/>
+                                <field name="subordinate_count"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Alt Pozisyonlar" name="children">
+                                <field name="child_ids">
+                                    <list create="1" delete="1">
+                                        <field name="name"/>
+                                        <field name="organization_type"/>
+                                        <field name="user_id"/>
+                                        <field name="department_type"/>
+                                        <field name="active"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Sorumlu Lokasyonlar" name="locations">
+                                <field name="location_ids" widget="many2many_tags"
+                                       options="{'no_create_edit': True}"/>
+                            </page>
+                            <page string="Yönetilen Takımlar" name="teams">
+                                <field name="team_ids">
+                                    <list create="0" delete="0">
+                                        <field name="name"/>
+                                        <field name="member_ids" widget="many2many_tags"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter reload_on_follower="True"/>
+                </form>
+            </field>
+        </record>
+
+        <!-- List View for Technical Service Organization -->
+        <record id="view_technical_service_organization_list" model="ir.ui.view">
+            <field name="name">technical.service.organization.list</field>
+            <field name="model">technical_service.organization</field>
+            <field name="arch" type="xml">
+                <list string="Teknik Organizasyon">
+                    <field name="complete_name"/>
+                    <field name="organization_type"/>
+                    <field name="user_id"/>
+                    <field name="department_type"/>
+                    <field name="parent_id"/>
+                    <field name="subordinate_count"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Search View for Technical Service Organization -->
+        <record id="view_technical_service_organization_search" model="ir.ui.view">
+            <field name="name">technical.service.organization.search</field>
+            <field name="model">technical_service.organization</field>
+            <field name="arch" type="xml">
+                <search string="Teknik Organizasyon Ara">
+                    <field name="name" string="Pozisyon"/>
+                    <field name="user_id"/>
+                    <field name="complete_name"/>
+                    <separator/>
+                    <filter string="Aktif" name="active" domain="[('active', '=', True)]"/>
+                    <filter string="Pasif" name="inactive" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    <filter string="Yöneticiler" name="managers"
+                            domain="[('organization_type', 'in', ['cto', 'department_manager', 'team_leader'])]"/>
+                    <filter string="Teknisyenler" name="technicians"
+                            domain="[('organization_type', 'in', ['senior_technician', 'technician'])]"/>
+                    <separator/>
+                    <filter string="IT" name="it" domain="[('department_type', '=', 'it')]"/>
+                    <filter string="Tesis" name="facility" domain="[('department_type', '=', 'facility')]"/>
+                    <filter string="Bakım" name="maintenance" domain="[('department_type', '=', 'maintenance')]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Organizasyon Tipi" name="group_org_type"
+                                domain="[]" context="{'group_by':'organization_type'}"/>
+                        <filter string="Birim" name="group_department"
+                                domain="[]" context="{'group_by':'department_type'}"/>
+                        <filter string="Üst Pozisyon" name="group_parent"
+                                domain="[]" context="{'group_by':'parent_id'}"/>
+                        <filter string="Durum" name="group_active"
+                                domain="[]" context="{'group_by':'active'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Kanban View for Technical Service Organization -->
+        <record id="view_technical_service_organization_kanban" model="ir.ui.view">
+            <field name="name">technical.service.organization.kanban</field>
+            <field name="model">technical_service.organization</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <field name="name"/>
+                    <field name="user_id"/>
+                    <field name="organization_type"/>
+                    <field name="department_type"/>
+                    <field name="active"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_global_click">
+                                <div class="oe_kanban_details">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                    <div class="text-muted">
+                                        <t t-if="record.user_id.raw_value">
+                                            <i class="fa fa-user" title="Kullanıcı"/> <field name="user_id"/>
+                                        </t>
+                                        <t t-else="">
+                                            <i class="fa fa-user-o text-warning" title="Atanmamış"/> Atanmamış
+                                        </t>
+                                    </div>
+                                    <div>
+                                        <field name="organization_type" widget="badge"/>
+                                    </div>
+                                    <div t-if="record.department_type.raw_value">
+                                        <field name="department_type" widget="badge"
+                                               decoration-info="department_type == 'it'"
+                                               decoration-warning="department_type == 'facility'"
+                                               decoration-success="department_type == 'maintenance'"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Action for Technical Service Organization -->
+        <record id="action_technical_service_organization" model="ir.actions.act_window">
+            <field name="name">Teknik Organizasyon</field>
+            <field name="res_model">technical_service.organization</field>
+            <field name="view_mode">list,kanban,form</field>
+            <field name="search_view_id" ref="view_technical_service_organization_search"/>
+            <field name="context">{'search_default_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    İlk teknik organizasyon pozisyonunu oluşturun
+                </p>
+                <p>
+                    Teknik organizasyon yapısı, HR'dan bağımsız olarak teknik ekiplerinizi
+                    yönetmenizi sağlar. CTO'dan başlayarak hiyerarşik bir yapı oluşturabilirsiniz.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu item for Technical Organization (will be added to main menu) -->
+        <menuitem id="menu_technical_service_organization"
+                  name="Teknik Organizasyon"
+                  parent="technical_service.menu_configuration"
+                  action="action_technical_service_organization"
+                  sequence="50"/>
+
+    </data>
+</odoo>

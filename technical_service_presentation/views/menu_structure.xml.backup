@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ============================================ -->
+        <!-- ROOT MENU - Technical Service Management     -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_technical_service_root"
+                  name="Teknik Talep Yönetimi"
+                  sequence="5"
+                  web_icon="technical_service,static/description/icon.png"/>
+
+        <!-- ============================================ -->
+        <!-- 🏠 DASHBOARD MENUS                          -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_dashboard"
+                  name="Dashboard"
+                  parent="menu_technical_service_root"
+                  sequence="10"/>
+
+        <!-- My Dashboard - All users can see -->
+        <menuitem id="menu_dashboard_my"
+                  name="Benim Dashboard'ım"
+                  parent="menu_dashboard"
+                  action="technical_service.action_technical_service_dashboard"
+                  sequence="10"/>
+
+        <!-- Team Dashboard - Managers only -->
+        <menuitem id="menu_dashboard_team"
+                  name="Ekip Dashboard'ı"
+                  parent="menu_dashboard"
+                  action="technical_service.action_technical_service_dashboard"
+                  groups="hr.group_hr_manager,technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader"
+                  sequence="20"/>
+
+        <!-- Management Dashboard - High level roles -->
+        <menuitem id="menu_dashboard_management"
+                  name="Yönetim Dashboard'ı"
+                  parent="menu_dashboard"
+                  action="technical_service.action_technical_service_dashboard"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_dispatcher,technical_service_presentation.group_technical_location_manager,technical_service_presentation.group_technical_reporting"
+                  sequence="30"/>
+
+        <!-- ============================================ -->
+        <!-- 📝 SERVICE REQUESTS MENUS                    -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_service_requests"
+                  name="Servis Talepleri"
+                  parent="menu_technical_service_root"
+                  sequence="20"/>
+
+        <!-- New Request - Most roles can create -->
+        <menuitem id="menu_request_new"
+                  name="Yeni Talep Olustur"
+                  parent="menu_service_requests"
+                  action="maintenance.maintenance_request_action"
+                  groups="base.group_user,hr.group_hr_manager,technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_dispatcher,technical_service_presentation.group_technical_location_manager"
+                  sequence="10"/>
+
+        <!-- My Requests - Standard users -->
+        <menuitem id="menu_request_my"
+                  name="Taleplerim"
+                  parent="menu_service_requests"
+                  action="maintenance.maintenance_request_action"
+                  groups="base.group_user,hr.group_hr_manager"
+                  sequence="20"/>
+
+        <!-- Team Requests - HR Manager -->
+        <menuitem id="menu_request_team_hr"
+                  name="Ekibimin Talepleri"
+                  parent="menu_service_requests"
+                  action="maintenance.maintenance_request_action"
+                  groups="hr.group_hr_manager"
+                  sequence="30"/>
+
+        <!-- Assigned Requests - Technicians -->
+        <menuitem id="menu_request_assigned"
+                  name="Atanmış Talepler"
+                  parent="menu_service_requests"
+                  action="maintenance.maintenance_request_action"
+                  groups="technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_senior_technician,technical_service_presentation.group_technical_technician"
+                  sequence="40"/>
+
+        <!-- All Requests - Management -->
+        <menuitem id="menu_request_all"
+                  name="Tüm Talepler"
+                  parent="menu_service_requests"
+                  action="maintenance.maintenance_request_action"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_dispatcher,technical_service_presentation.group_technical_location_manager,technical_service_presentation.group_technical_reporting"
+                  sequence="50"/>
+
+        <!-- Pending Requests - Management -->
+        <menuitem id="menu_request_pending"
+                  name="Bekleyen Talepler"
+                  parent="menu_service_requests"
+                  action="maintenance.maintenance_request_action"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_dispatcher"
+                  sequence="60"/>
+
+        <!-- ============================================ -->
+        <!-- 🔨 WORK ORDERS MENUS                        -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_work_orders"
+                  name="İş Emirleri"
+                  parent="menu_technical_service_root"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_senior_technician,technical_service_presentation.group_technical_technician,technical_service_presentation.group_technical_dispatcher,technical_service_presentation.group_technical_location_manager,technical_service_presentation.group_technical_reporting"
+                  sequence="30"/>
+
+        <!-- New Work Order -->
+        <menuitem id="menu_work_order_new"
+                  name="Yeni İş Emri"
+                  parent="menu_work_orders"
+                  action="technical_service.action_technical_service_work_order"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_dispatcher"
+                  sequence="10"/>
+
+        <!-- My Work Orders - Technicians -->
+        <menuitem id="menu_work_order_my"
+                  name="İş Emirlerim"
+                  parent="menu_work_orders"
+                  action="technical_service.action_technical_service_work_order"
+                  groups="technical_service_presentation.group_technical_senior_technician,technical_service_presentation.group_technical_technician"
+                  sequence="20"/>
+
+        <!-- Team Work Orders -->
+        <menuitem id="menu_work_order_team"
+                  name="Ekip İş Emirleri"
+                  parent="menu_work_orders"
+                  action="technical_service.action_technical_service_work_order"
+                  groups="technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader"
+                  sequence="30"/>
+
+        <!-- All Work Orders -->
+        <menuitem id="menu_work_order_all"
+                  name="Tüm İş Emirleri"
+                  parent="menu_work_orders"
+                  action="technical_service.action_technical_service_work_order"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_dispatcher,technical_service_presentation.group_technical_location_manager,technical_service_presentation.group_technical_reporting"
+                  sequence="40"/>
+
+        <!-- ============================================ -->
+        <!-- 🏗️ ASSET MANAGEMENT MENUS                   -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_asset_management"
+                  name="Varlık Yönetimi"
+                  parent="menu_technical_service_root"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_senior_technician,technical_service_presentation.group_technical_technician,technical_service_presentation.group_technical_location_manager,technical_service_presentation.group_technical_inventory_manager,technical_service_presentation.group_technical_reporting"
+                  sequence="40"/>
+
+        <!-- Equipment -->
+        <menuitem id="menu_asset_equipment"
+                  name="Ekipmanlar"
+                  parent="menu_asset_management"
+                  action="maintenance.maintenance_equipment_action"
+                  sequence="10"/>
+
+        <!-- Maintenance Contracts -->
+        <menuitem id="menu_asset_contracts"
+                  name="Bakım Sözleşmeleri"
+                  parent="menu_asset_management"
+                  action="technical_service.action_technical_service_contract"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_location_manager,technical_service_presentation.group_technical_reporting"
+                  sequence="20"/>
+
+        <!-- Preventive Maintenance -->
+        <menuitem id="menu_asset_preventive"
+                  name="Periyodik Bakımlar"
+                  parent="menu_asset_management"
+                  action="technical_service.action_preventive_maintenance_schedule"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_senior_technician,technical_service_presentation.group_technical_technician,technical_service_presentation.group_technical_location_manager"
+                  sequence="30"/>
+
+        <!-- ============================================ -->
+        <!-- 👥 TEAM MANAGEMENT MENUS                     -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_team_management"
+                  name="Ekip Yönetimi"
+                  parent="menu_technical_service_root"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_dispatcher"
+                  sequence="50"/>
+
+        <!-- Technicians -->
+        <menuitem id="menu_team_technicians"
+                  name="Teknisyenler"
+                  parent="menu_team_management"
+                  action="technical_service.action_technical_service_team_member"
+                  sequence="10"/>
+
+        <!-- Teams -->
+        <menuitem id="menu_team_teams"
+                  name="Takımlar"
+                  parent="menu_team_management"
+                  action="maintenance.maintenance_team_action"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader"
+                  sequence="20"/>
+
+        <!-- Shifts -->
+        <menuitem id="menu_team_shifts"
+                  name="Vardiyalar"
+                  parent="menu_team_management"
+                                    groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader"
+                  sequence="30"/>
+
+        <!-- Performance -->
+        <menuitem id="menu_team_performance"
+                  name="Performans"
+                  parent="menu_team_management"
+                                    groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader"
+                  sequence="40"/>
+
+        <!-- ============================================ -->
+        <!-- 🏢 TECHNICAL ORGANIZATION MENUS              -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_technical_organization"
+                  name="Teknik Organizasyon"
+                  parent="menu_technical_service_root"
+                  groups="technical_service_presentation.group_technical_cto"
+                  sequence="60"/>
+
+        <!-- Organization Structure -->
+        <menuitem id="menu_org_structure"
+                  name="Organizasyon Yapısı"
+                  parent="menu_technical_organization"
+                  action="technical_service.action_technical_service_organization"
+                  sequence="10"/>
+
+        <!-- Position Management -->
+        <menuitem id="menu_org_positions"
+                  name="Pozisyon Yönetimi"
+                  parent="menu_technical_organization"
+                  action="technical_service.action_technical_service_organization"
+                  sequence="20"/>
+
+        <!-- Role Assignments -->
+        <menuitem id="menu_org_roles"
+                  name="Rol Atamaları"
+                  parent="menu_technical_organization"
+                  action="technical_service.action_technical_service_organization"
+                  sequence="30"/>
+
+        <!-- ============================================ -->
+        <!-- 📍 LOCATION MANAGEMENT MENUS                 -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_location_management"
+                  name="Lokasyon Yönetimi"
+                  parent="menu_technical_service_root"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_location_manager"
+                  sequence="70"/>
+
+        <!-- Campuses -->
+        <menuitem id="menu_location_campus"
+                  name="Kampüsler"
+                  parent="menu_location_management"
+                  action="technical_service.action_technical_service_campus"
+                  sequence="10"/>
+
+        <!-- Buildings -->
+        <menuitem id="menu_location_building"
+                  name="Binalar"
+                  parent="menu_location_management"
+                  action="technical_service.action_technical_service_building"
+                  sequence="20"/>
+
+        <!-- Areas -->
+        <menuitem id="menu_location_area"
+                  name="Alanlar"
+                  parent="menu_location_management"
+                                    sequence="30"/>
+
+        <!-- ============================================ -->
+        <!-- 📦 INVENTORY MENUS                           -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_inventory"
+                  name="Envanter"
+                  parent="menu_technical_service_root"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_senior_technician,technical_service_presentation.group_technical_technician,technical_service_presentation.group_technical_inventory_manager"
+                  sequence="80"/>
+
+        <!-- Stock Status -->
+        <menuitem id="menu_inventory_stock"
+                  name="Stok Durumu"
+                  parent="menu_inventory"
+                  action="technical_service.action_technical_service_inventory"
+                  sequence="10"/>
+
+        <!-- Material Requests -->
+        <menuitem id="menu_inventory_requests"
+                  name="Malzeme Talepleri"
+                  parent="menu_inventory"
+                  action="technical_service.action_technical_service_inventory"
+                  sequence="20"/>
+
+        <!-- Fixed Assets -->
+        <menuitem id="menu_inventory_assets"
+                  name="Demirbaşlar"
+                  parent="menu_inventory"
+                  action="technical_service.action_technical_service_inventory"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_inventory_manager"
+                  sequence="30"/>
+
+        <!-- ============================================ -->
+        <!-- 📊 REPORTS MENUS                             -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_reports"
+                  name="Raporlar"
+                  parent="menu_technical_service_root"
+                  groups="hr.group_hr_manager,technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_dispatcher,technical_service_presentation.group_technical_location_manager,technical_service_presentation.group_technical_inventory_manager,technical_service_presentation.group_technical_reporting"
+                  sequence="90"/>
+
+        <!-- Request Reports - Available to users too -->
+        <menuitem id="menu_report_requests"
+                  name="Talep Raporları"
+                  parent="menu_reports"
+                  action="technical_service.action_technical_service_report_wizard"
+                  groups="base.group_user,hr.group_hr_manager,technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_dispatcher,technical_service_presentation.group_technical_location_manager,technical_service_presentation.group_technical_reporting"
+                  sequence="10"/>
+
+        <!-- Performance Reports -->
+        <menuitem id="menu_report_performance"
+                  name="Performans Raporları"
+                  parent="menu_reports"
+                  action="technical_service.action_technical_service_report_wizard"
+                  groups="hr.group_hr_manager,technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_reporting"
+                  sequence="20"/>
+
+        <!-- SLA Reports -->
+        <menuitem id="menu_report_sla"
+                  name="SLA Raporları"
+                  parent="menu_reports"
+                  action="technical_service.action_technical_service_report_wizard"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_dispatcher,technical_service_presentation.group_technical_reporting"
+                  sequence="30"/>
+
+        <!-- Inventory Reports -->
+        <menuitem id="menu_report_inventory"
+                  name="Envanter Raporları"
+                  parent="menu_reports"
+                  action="technical_service.action_technical_service_report_wizard"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_inventory_manager,technical_service_presentation.group_technical_reporting"
+                  sequence="40"/>
+
+        <!-- Cost Reports -->
+        <menuitem id="menu_report_costs"
+                  name="Maliyet Raporları"
+                  parent="menu_reports"
+                  action="technical_service.action_technical_service_report_wizard"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_inventory_manager,technical_service_presentation.group_technical_reporting"
+                  sequence="50"/>
+
+        <!-- ============================================ -->
+        <!-- ⚙️ CONFIGURATION MENUS                      -->
+        <!-- ============================================ -->
+
+        <menuitem id="menu_configuration_new"
+                  name="Konfigürasyon"
+                  parent="menu_technical_service_root"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager"
+                  sequence="100"/>
+
+        <!-- General Settings -->
+        <menuitem id="menu_config_settings"
+                  name="Genel Ayarlar"
+                  parent="menu_configuration_new"
+                  action="technical_service.action_res_config_settings"
+                  groups="technical_service_presentation.group_technical_cto"
+                  sequence="10"/>
+
+        <!-- SLA Policies -->
+        <menuitem id="menu_config_sla"
+                  name="SLA Politikaları"
+                  parent="menu_configuration_new"
+                  action="technical_service.action_technical_service_sla"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager"
+                  sequence="20"/>
+
+        <!-- Categories -->
+        <menuitem id="menu_config_categories"
+                  name="Kategoriler"
+                  parent="menu_configuration_new"
+                  action="maintenance.maintenance_equipment_category_action"
+                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_dispatcher"
+                  sequence="30"/>
+
+        <!-- User Management -->
+        <menuitem id="menu_config_users"
+                  name="Kullanıcı Yönetimi"
+                  parent="menu_configuration_new"
+                  action="base.action_res_users"
+                  groups="technical_service_presentation.group_technical_cto"
+                  sequence="40"/>
+
+    </data>
+</odoo>

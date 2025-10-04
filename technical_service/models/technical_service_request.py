@@ -370,3 +370,73 @@ class TechnicalServiceRequest(models.Model):
                 record.x_department_id = record.create_uid.employee_id.department_id
             else:
                 record.x_department_id = False
+
+    @api.model
+    def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None):
+        """Override search_read to filter by department when context flag is set"""
+        if self.env.context.get('search_default_department'):
+            current_employee = self.env.user.employee_id
+            if current_employee:
+                dept_employee_ids = []
+
+                # 1. Current user's employee
+                dept_employee_ids.append(current_employee.id)
+
+                # 2. Subordinates
+                subordinates = self.env['hr.employee'].search([
+                    ('parent_id', '=', current_employee.id)
+                ])
+                dept_employee_ids.extend(subordinates.ids)
+
+                # 3. Department colleagues
+                if current_employee.department_id:
+                    dept_colleagues = self.env['hr.employee'].search([
+                        ('department_id', '=', current_employee.department_id.id)
+                    ])
+                    dept_employee_ids.extend(dept_colleagues.ids)
+
+                # Add to domain
+                dept_employee_ids = list(set(dept_employee_ids))
+                dept_domain = [('employee_id', 'in', dept_employee_ids)]
+
+                if domain:
+                    domain = ['&'] + dept_domain + domain
+                else:
+                    domain = dept_domain
+
+        return super(TechnicalServiceRequest, self).search_read(domain, fields, offset, limit, order)
+
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        """Override search to filter by department when context flag is set"""
+        if self.env.context.get('search_default_department'):
+            current_employee = self.env.user.employee_id
+            if current_employee:
+                dept_employee_ids = []
+
+                # 1. Current user's employee
+                dept_employee_ids.append(current_employee.id)
+
+                # 2. Subordinates
+                subordinates = self.env['hr.employee'].search([
+                    ('parent_id', '=', current_employee.id)
+                ])
+                dept_employee_ids.extend(subordinates.ids)
+
+                # 3. Department colleagues
+                if current_employee.department_id:
+                    dept_colleagues = self.env['hr.employee'].search([
+                        ('department_id', '=', current_employee.department_id.id)
+                    ])
+                    dept_employee_ids.extend(dept_colleagues.ids)
+
+                # Add to domain
+                dept_employee_ids = list(set(dept_employee_ids))
+                dept_domain = [('employee_id', 'in', dept_employee_ids)]
+
+                if args:
+                    args = ['&'] + dept_domain + list(args)
+                else:
+                    args = dept_domain
+
+        return super(TechnicalServiceRequest, self).search(args, offset, limit, order, count)

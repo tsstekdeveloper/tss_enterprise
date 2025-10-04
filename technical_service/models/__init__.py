@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from . import technical_service_organization  # Yeni - İzole teknik organizasyon yapısı
+from . import technical_service_role_sync  # Automatic role and security group sync
 from . import technical_service_location
 from . import technical_service_request
 from . import technical_service_work_order

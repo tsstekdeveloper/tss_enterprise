@@ -29,6 +29,24 @@ class TechnicalServiceTeam(models.Model):
         ('mixed', 'Mixed/All'),
     ], string='Team Specialization', default='mixed')
 
+    # Team Type for Role Assignment
+    team_type = fields.Selection([
+        ('operational', 'Operasyonel Ekip'),      # Normal technical teams
+        ('dispatching', 'Dispatching Ekibi'),     # DSP role assignment
+        ('inventory', 'Envanter Ekibi'),          # INV role assignment
+        ('location', 'Lokasyon Ekibi'),           # LCM role assignment
+    ], string='Ekip Tipi', default='operational',
+       help='Ekip tipi, üyelerin otomatik rol atamasını belirler')
+
+    # Team Leader - Computed from team members
+    team_leader_user_id = fields.Many2one(
+        'res.users',
+        string='Takım Lideri',
+        compute='_compute_team_leader',
+        store=True,
+        help='Bu ekibin takım lideri (team members içinden otomatik belirlenir)'
+    )
+
     # Team Members with Skills
     x_member_ids = fields.One2many(
         'technical_service.team.member',
@@ -88,6 +106,19 @@ class TechnicalServiceTeam(models.Model):
     def _compute_member_count(self):
         for team in self:
             team.x_member_count = len(team.x_member_ids)
+
+    @api.depends('x_member_ids.member_role', 'x_member_ids.user_id', 'x_member_ids.employee_id.user_id')
+    def _compute_team_leader(self):
+        """Compute team leader from team members with team_leader role"""
+        for team in self:
+            leader_members = team.x_member_ids.filtered(
+                lambda m: m.member_role == 'team_leader' and m.user_id
+            )
+            if leader_members:
+                # Use the first team leader found
+                team.team_leader_user_id = leader_members[0].user_id
+            else:
+                team.team_leader_user_id = False
 
     def _compute_workload(self):
         for team in self:
@@ -195,8 +226,17 @@ class TechnicalServiceTeamMember(models.Model):
     user_id = fields.Many2one(
         related='employee_id.user_id',
         string='User',
-        store=True
+        store=True,
+        readonly=False  # Allow manual override if needed
     )
+
+    # Member Role in Team
+    member_role = fields.Selection([
+        ('team_leader', 'Takım Lideri'),
+        ('senior_technician', 'Kıdemli Teknisyen'),
+        ('technician', 'Teknisyen'),
+    ], string='Ekip İçi Rol', default='technician',
+       help='Bu üyenin ekip içindeki rolü')
 
     # Skills
     x_skill_category_ids = fields.Many2many(
@@ -279,3 +319,16 @@ class TechnicalServiceTeamMember(models.Model):
             self.x_is_available = True
         else:
             self.x_is_available = False
+
+    @api.constrains('member_role', 'team_id')
+    def _check_single_team_leader(self):
+        """Ensure only one team leader per team"""
+        for member in self:
+            if member.member_role == 'team_leader':
+                other_leaders = self.search([
+                    ('team_id', '=', member.team_id.id),
+                    ('member_role', '=', 'team_leader'),
+                    ('id', '!=', member.id)
+                ])
+                if other_leaders:
+                    raise ValidationError(_('Bir ekipte sadece bir takım lideri olabilir!'))

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Module Category -->
+        <record id="module_category_technical_service_presentation" model="ir.module.category">
+            <field name="name">Technical Service Roles</field>
+            <field name="description">Technical Service Management Role-based Access Control</field>
+            <field name="sequence">90</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- 1. HR-BASED ROLES (Uses existing HR groups) -->
+        <!-- ============================================ -->
+
+        <!-- Standard User - Uses base.group_user (existing) -->
+        <!-- Department Manager - Uses hr.group_hr_manager (existing) -->
+
+        <!-- ============================================ -->
+        <!-- 2. TECHNICAL ORGANIZATION ROLES             -->
+        <!-- ============================================ -->
+
+        <!-- CTO / Technical Director -->
+        <record id="group_technical_cto" model="res.groups">
+            <field name="name">Technical Service / CTO</field>
+            <field name="category_id" ref="module_category_technical_service_presentation"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Full access to all technical service operations and strategic management</field>
+        </record>
+
+        <!-- Department Manager (Technical) -->
+        <record id="group_technical_department_manager" model="res.groups">
+            <field name="name">Technical Service / Department Manager</field>
+            <field name="category_id" ref="module_category_technical_service_presentation"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Manages specific technical departments (IT, Facility, Maintenance)</field>
+        </record>
+
+        <!-- Team Leader -->
+        <record id="group_technical_team_leader" model="res.groups">
+            <field name="name">Technical Service / Team Leader</field>
+            <field name="category_id" ref="module_category_technical_service_presentation"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Manages technical teams and assigns work to technicians</field>
+        </record>
+
+        <!-- Senior Technician -->
+        <record id="group_technical_senior_technician" model="res.groups">
+            <field name="name">Technical Service / Senior Technician</field>
+            <field name="category_id" ref="module_category_technical_service_presentation"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Experienced technician with mentoring capabilities</field>
+        </record>
+
+        <!-- Technician -->
+        <record id="group_technical_technician" model="res.groups">
+            <field name="name">Technical Service / Technician</field>
+            <field name="category_id" ref="module_category_technical_service_presentation"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Technical staff who execute service requests</field>
+        </record>
+
+        <!-- Dispatcher -->
+        <record id="group_technical_dispatcher" model="res.groups">
+            <field name="name">Technical Service / Dispatcher</field>
+            <field name="category_id" ref="module_category_technical_service_presentation"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Coordinates and dispatches technical service requests</field>
+        </record>
+
+        <!-- Location Manager -->
+        <record id="group_technical_location_manager" model="res.groups">
+            <field name="name">Technical Service / Location Manager</field>
+            <field name="category_id" ref="module_category_technical_service_presentation"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Manages technical services for specific locations</field>
+        </record>
+
+        <!-- Inventory Manager -->
+        <record id="group_technical_inventory_manager" model="res.groups">
+            <field name="name">Technical Service / Inventory Manager</field>
+            <field name="category_id" ref="module_category_technical_service_presentation"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Manages spare parts and inventory for technical services</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- 3. SPECIAL ROLES                             -->
+        <!-- ============================================ -->
+
+        <!-- Reporting Officer -->
+        <record id="group_technical_reporting" model="res.groups">
+            <field name="name">Technical Service / Reporting Officer</field>
+            <field name="category_id" ref="module_category_technical_service_presentation"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Read-only access to all reports and analytics</field>
+        </record>
+
+        <!-- External User (Customer/Partner) -->
+        <record id="group_technical_external_user" model="res.groups">
+            <field name="name">Technical Service / External User</field>
+            <field name="category_id" ref="module_category_technical_service_presentation"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_portal'))]"/>
+            <field name="comment">External users who can submit and track service requests</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- GROUP HIERARCHIES AND IMPLICATIONS          -->
+        <!-- ============================================ -->
+
+        <!-- CTO has all technical permissions -->
+        <record id="group_technical_cto_implications" model="res.groups">
+            <field name="name">group_technical_cto</field>
+            <field name="implied_ids" eval="[(4, ref('group_technical_department_manager')),
+                                            (4, ref('group_technical_team_leader')),
+                                            (4, ref('group_technical_dispatcher')),
+                                            (4, ref('group_technical_location_manager')),
+                                            (4, ref('group_technical_inventory_manager')),
+                                            (4, ref('maintenance.group_equipment_manager'))]"/>
+        </record>
+
+        <!-- Department Manager implications -->
+        <record id="group_technical_department_manager_implications" model="res.groups">
+            <field name="name">group_technical_department_manager</field>
+            <field name="implied_ids" eval="[(4, ref('group_technical_team_leader')),
+                                            (4, ref('maintenance.group_equipment_manager'))]"/>
+        </record>
+
+        <!-- Team Leader implications -->
+        <record id="group_technical_team_leader_implications" model="res.groups">
+            <field name="name">group_technical_team_leader</field>
+            <field name="implied_ids" eval="[(4, ref('group_technical_senior_technician')),
+                                            (4, ref('maintenance.group_equipment_manager'))]"/>
+        </record>
+
+        <!-- Senior Technician implications -->
+        <record id="group_technical_senior_technician_implications" model="res.groups">
+            <field name="name">group_technical_senior_technician</field>
+            <field name="implied_ids" eval="[(4, ref('group_technical_technician'))]"/>
+        </record>
+
+    </data>
+</odoo>

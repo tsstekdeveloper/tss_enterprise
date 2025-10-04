@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================ -->
+        <!-- MAINTENANCE REQUEST RULES                    -->
+        <!-- ============================================ -->
+
+        <!-- Standard User: Can see only own requests -->
+        <record id="rule_maintenance_request_user_own" model="ir.rule">
+            <field name="name">Maintenance Request: User Own</field>
+            <field name="model_id" ref="maintenance.model_maintenance_request"/>
+            <field name="domain_force">[('create_uid', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <!-- HR Manager: Can see department's requests -->
+        <record id="rule_maintenance_request_hr_manager" model="ir.rule">
+            <field name="name">Maintenance Request: HR Manager Department</field>
+            <field name="model_id" ref="maintenance.model_maintenance_request"/>
+            <field name="domain_force">[('employee_id.department_id', '=', user.employee_id.department_id.id)]</field>
+            <field name="groups" eval="[(4, ref('hr.group_hr_manager'))]"/>
+        </record>
+
+        <!-- CTO: Can see all requests -->
+        <record id="rule_maintenance_request_cto" model="ir.rule">
+            <field name="name">Maintenance Request: CTO All</field>
+            <field name="model_id" ref="maintenance.model_maintenance_request"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_technical_cto'))]"/>
+        </record>
+
+        <!-- Department Manager: Can see department's assigned requests -->
+        <record id="rule_maintenance_request_dept_manager" model="ir.rule">
+            <field name="name">Maintenance Request: Dept Manager</field>
+            <field name="model_id" ref="maintenance.model_maintenance_request"/>
+            <field name="domain_force">['|',
+                ('maintenance_team_id.technical_org_id.user_id', '=', user.id),
+                ('maintenance_team_id.technical_org_id', 'in', user.technical_org_id.child_ids.ids)]</field>
+            <field name="groups" eval="[(4, ref('group_technical_department_manager'))]"/>
+        </record>
+
+        <!-- Team Leader: Can see team's requests -->
+        <record id="rule_maintenance_request_team_leader" model="ir.rule">
+            <field name="name">Maintenance Request: Team Leader</field>
+            <field name="model_id" ref="maintenance.model_maintenance_request"/>
+            <field name="domain_force">[('maintenance_team_id', 'in', user.technical_org_id.team_ids.ids)]</field>
+            <field name="groups" eval="[(4, ref('group_technical_team_leader'))]"/>
+        </record>
+
+        <!-- Technician: Can see assigned requests -->
+        <record id="rule_maintenance_request_technician" model="ir.rule">
+            <field name="name">Maintenance Request: Technician Assigned</field>
+            <field name="model_id" ref="maintenance.model_maintenance_request"/>
+            <field name="domain_force">[('technician_user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_technical_technician'))]"/>
+        </record>
+
+        <!-- Dispatcher: Can see unassigned and in-progress requests -->
+        <record id="rule_maintenance_request_dispatcher" model="ir.rule">
+            <field name="name">Maintenance Request: Dispatcher</field>
+            <field name="model_id" ref="maintenance.model_maintenance_request"/>
+            <field name="domain_force">[('stage_id.done', '=', False)]</field>
+            <field name="groups" eval="[(4, ref('group_technical_dispatcher'))]"/>
+        </record>
+
+        <!-- Location Manager: Can see location's requests -->
+        <record id="rule_maintenance_request_location_manager" model="ir.rule">
+            <field name="name">Maintenance Request: Location Manager</field>
+            <field name="model_id" ref="maintenance.model_maintenance_request"/>
+            <field name="domain_force">[('x_campus_id', 'in', user.technical_org_id.location_ids.ids)]</field>
+            <field name="groups" eval="[(4, ref('group_technical_location_manager'))]"/>
+        </record>
+
+        <!-- External User: Can see own requests -->
+        <record id="rule_maintenance_request_external" model="ir.rule">
+            <field name="name">Maintenance Request: External User</field>
+            <field name="model_id" ref="maintenance.model_maintenance_request"/>
+            <field name="domain_force">[('create_uid', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_technical_external_user'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- WORK ORDER RULES                             -->
+        <!-- ============================================ -->
+
+        <!-- Standard User: No access to work orders -->
+        <record id="rule_work_order_user_none" model="ir.rule">
+            <field name="name">Work Order: User No Access</field>
+            <field name="model_id" ref="technical_service.model_technical_service_work_order"/>
+            <field name="domain_force">[(0, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- CTO: Can see all work orders -->
+        <record id="rule_work_order_cto" model="ir.rule">
+            <field name="name">Work Order: CTO All</field>
+            <field name="model_id" ref="technical_service.model_technical_service_work_order"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_technical_cto'))]"/>
+        </record>
+
+        <!-- Team Leader: Can see team's work orders -->
+        <record id="rule_work_order_team_leader" model="ir.rule">
+            <field name="name">Work Order: Team Leader</field>
+            <field name="model_id" ref="technical_service.model_technical_service_work_order"/>
+            <field name="domain_force">[('team_id', 'in', user.technical_org_id.team_ids.ids)]</field>
+            <field name="groups" eval="[(4, ref('group_technical_team_leader'))]"/>
+        </record>
+
+        <!-- Technician: Can see assigned work orders -->
+        <record id="rule_work_order_technician" model="ir.rule">
+            <field name="name">Work Order: Technician Assigned</field>
+            <field name="model_id" ref="technical_service.model_technical_service_work_order"/>
+            <field name="domain_force">[('x_technician_user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_technical_technician'))]"/>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- EQUIPMENT/ASSET RULES                        -->
+        <!-- ============================================ -->
+
+        <!-- Standard User: Can see all equipment (read only) -->
+        <record id="rule_equipment_user_read" model="ir.rule">
+            <field name="name">Equipment: User Read Only</field>
+            <field name="model_id" ref="maintenance.model_maintenance_equipment"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <!-- Location Manager: Can manage location's equipment -->
+        <record id="rule_equipment_location_manager" model="ir.rule">
+            <field name="name">Equipment: Location Manager</field>
+            <field name="model_id" ref="maintenance.model_maintenance_equipment"/>
+            <field name="domain_force">[('x_campus_id', 'in', user.technical_org_id.location_ids.ids)]</field>
+            <field name="groups" eval="[(4, ref('group_technical_location_manager'))]"/>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- TEAM RULES                                   -->
+        <!-- ============================================ -->
+
+        <!-- Team Leader: Can manage own team -->
+        <record id="rule_team_team_leader" model="ir.rule">
+            <field name="name">Team: Team Leader Own</field>
+            <field name="model_id" ref="maintenance.model_maintenance_team"/>
+            <field name="domain_force">[('technical_org_id', '=', user.technical_org_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_technical_team_leader'))]"/>
+        </record>
+
+        <!-- Department Manager: Can manage department's teams -->
+        <record id="rule_team_dept_manager" model="ir.rule">
+            <field name="name">Team: Department Manager</field>
+            <field name="model_id" ref="maintenance.model_maintenance_team"/>
+            <field name="domain_force">[('technical_org_id', 'child_of', user.technical_org_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_technical_department_manager'))]"/>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- TECHNICAL ORGANIZATION RULES                 -->
+        <!-- ============================================ -->
+
+        <!-- Standard users: Can see organization structure (read only) -->
+        <record id="rule_tech_org_user_read" model="ir.rule">
+            <field name="name">Tech Org: User Read Only</field>
+            <field name="model_id" ref="technical_service.model_technical_service_organization"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <!-- CTO: Full access to organization structure -->
+        <record id="rule_tech_org_cto" model="ir.rule">
+            <field name="name">Tech Org: CTO Full Access</field>
+            <field name="model_id" ref="technical_service.model_technical_service_organization"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_technical_cto'))]"/>
+        </record>
+
+        <!-- Department Manager: Can manage own department -->
+        <record id="rule_tech_org_dept_manager" model="ir.rule">
+            <field name="name">Tech Org: Department Manager</field>
+            <field name="model_id" ref="technical_service.model_technical_service_organization"/>
+            <field name="domain_force">[('parent_left', '&gt;=', user.technical_org_id.parent_left),
+                                       ('parent_right', '&lt;=', user.technical_org_id.parent_right)]</field>
+            <field name="groups" eval="[(4, ref('group_technical_department_manager'))]"/>
+        </record>
+
+    </data>
+</odoo>

@@ -58,7 +58,8 @@
                     <button name="action_complete_work" string="Complete" type="object"
                             class="btn-success" invisible="x_work_status not in ['in_progress', 'paused']"/>
                     <field name="x_work_status" widget="statusbar"
-                           statusbar_visible="pending,in_progress,completed"/>
+                           statusbar_visible="pending,in_progress,completed"
+                           readonly="1"/>
                 </header>
                 <sheet>
                     <div class="oe_title">

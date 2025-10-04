@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Categories for Technical Service Organization -->
+        <record id="module_category_technical_organization" model="ir.module.category">
+            <field name="name">Teknik Organizasyon</field>
+            <field name="description">Teknik Organizasyon Yönetimi</field>
+            <field name="sequence">100</field>
+        </record>
+
+        <!-- Basic Groups for Organization Management -->
+        <record id="group_technical_organization_user" model="res.groups">
+            <field name="name">Teknik Organizasyon / Kullanıcı</field>
+            <field name="category_id" ref="module_category_technical_organization"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Kendi pozisyon bilgilerini görüntüleyebilir</field>
+        </record>
+
+        <record id="group_technical_organization_manager" model="res.groups">
+            <field name="name">Teknik Organizasyon / Yönetici</field>
+            <field name="category_id" ref="module_category_technical_organization"/>
+            <field name="implied_ids" eval="[(4, ref('group_technical_organization_user'))]"/>
+            <field name="comment">Teknik organizasyon yapısını yönetebilir</field>
+        </record>
+
+        <!-- Record Rules for Organization -->
+        <record id="technical_organization_user_rule" model="ir.rule">
+            <field name="name">Technical Organization: User can see own and subordinates</field>
+            <field name="model_id" ref="model_technical_service_organization"/>
+            <field name="domain_force">['|',
+                ('user_id', '=', user.id),
+                ('parent_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_technical_organization_user'))]"/>
+        </record>
+
+        <record id="technical_organization_manager_rule" model="ir.rule">
+            <field name="name">Technical Organization: Manager can see all</field>
+            <field name="model_id" ref="model_technical_service_organization"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_technical_organization_manager'))]"/>
+        </record>
+
+    </data>
+</odoo>

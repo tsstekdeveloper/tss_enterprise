@@ -43,15 +43,21 @@
 
     # Data files
     'data': [
+        'security/technical_service_security.xml',  # Security groups for organization
         'security/ir.model.access.csv',
         'data/sequence_data.xml',
         'views/technical_service_actions.xml',  # Load actions first
+        'views/menu_actions.xml',  # Additional menu actions
+        'views/missing_actions.xml',  # Missing actions for complete menu structure
+        'views/placeholder_views.xml',  # Placeholder views for development in progress
         'views/technical_service_request_views.xml',
         'views/technical_service_work_order_views.xml',
         'views/technical_service_asset_views.xml',
         'views/technical_service_location_views.xml',
         'views/technical_service_sla_views.xml',
+        'views/technical_service_team_views.xml',  # Team hierarchy views
         'views/technical_service_preventive_views.xml',  # Add preventive maintenance views
+        'views/technical_service_organization_views.xml',  # Technical organization views
         'views/technical_service_dashboard.xml',
         'views/technical_service_reports.xml',
         'views/technical_service_menu.xml',  # Menu definitions must be loaded first
@@ -64,14 +70,14 @@
         # 'demo/technical_service_demo.xml',
     ],
 
-    # Assets
+    # Assets - Temporarily disabled JS files for debugging
     'assets': {
         'web.assets_backend': [
             'technical_service/static/src/scss/technical_service.scss',
             'technical_service/static/src/scss/form_buttons.scss',
-            'technical_service/static/src/js/dashboard_widget.js',
-            'technical_service/static/src/js/form_buttons.js',
-            'technical_service/static/src/xml/dashboard_templates.xml',
+            # 'technical_service/static/src/js/dashboard_widget.js',
+            # 'technical_service/static/src/js/form_buttons.js',
+            # 'technical_service/static/src/xml/dashboard_templates.xml',
         ],
     },
 

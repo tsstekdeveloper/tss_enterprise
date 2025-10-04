@@ -106,72 +106,7 @@
         </field>
     </record>
 
-    <!-- Team Form View -->
-    <record id="view_technical_service_team_form" model="ir.ui.view">
-        <field name="name">technical.service.team.form</field>
-        <field name="model">maintenance.team</field>
-        <field name="inherit_id" ref="maintenance.maintenance_team_view_form"/>
-        <field name="arch" type="xml">
-            <!-- Add team details -->
-            <xpath expr="//group" position="replace">
-                <group>
-                    <group string="Team Information">
-                        <field name="x_specialization"/>
-                        <field name="x_shift_type"/>
-                        <field name="x_current_shift"
-                               invisible="x_shift_type not in ['shift', '24x7']"/>
-                    </group>
-                    <group string="Coverage">
-                        <field name="x_campus_ids" widget="many2many_tags"/>
-                        <field name="x_member_count"/>
-                    </group>
-                </group>
-                <group>
-                    <group string="Auto Assignment">
-                        <field name="x_auto_assign"/>
-                        <field name="x_assignment_method"
-                               invisible="not x_auto_assign"
-                               required="x_auto_assign"/>
-                    </group>
-                    <group string="Workload">
-                        <field name="x_active_requests"/>
-                        <field name="x_pending_requests"/>
-                        <field name="x_avg_resolution_time" widget="float_time"/>
-                    </group>
-                </group>
-            </xpath>
-
-            <!-- Add notebook -->
-            <xpath expr="//sheet/group" position="after">
-                <notebook>
-                    <page string="Team Members" name="members">
-                        <field name="x_member_ids">
-                            <list editable="bottom" create="1" delete="1">
-                                <field name="employee_id" required="1"/>
-                                <field name="user_id" readonly="1"/>
-                                <field name="x_skill_level"/>
-                                <field name="x_shift"/>
-                                <field name="x_availability_status"/>
-                                <field name="x_is_available" readonly="1"/>
-                                <field name="x_active_request_count"/>
-                                <field name="x_completed_today"/>
-                            </list>
-                        </field>
-                    </page>
-                    <page string="Skills &amp; Certifications" name="skills">
-                        <field name="x_member_ids">
-                            <list editable="bottom">
-                                <field name="employee_id" readonly="1"/>
-                                <field name="x_skill_category_ids" widget="many2many_tags"/>
-                                <field name="x_certifications"/>
-                                <field name="x_coverage_campus_ids" widget="many2many_tags"/>
-                            </list>
-                        </field>
-                    </page>
-                </notebook>
-            </xpath>
-        </field>
-    </record>
+    <!-- Note: Team form view is defined in technical_service_team_views.xml -->
 
     <!-- Actions -->
     <record id="action_technical_service_sla" model="ir.actions.act_window">
@@ -219,10 +154,5 @@
         <field name="act_window_id" ref="action_technical_service_team"/>
     </record>
 
-    <record id="action_technical_service_team_view_form" model="ir.actions.act_window.view">
-        <field name="sequence" eval="3"/>
-        <field name="view_mode">form</field>
-        <field name="view_id" ref="view_technical_service_team_form"/>
-        <field name="act_window_id" ref="action_technical_service_team"/>
-    </record>
+    <!-- Note: Team action view is defined in technical_service_team_views.xml -->
 </odoo>
