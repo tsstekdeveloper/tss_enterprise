@@ -22,7 +22,7 @@
 
         <!-- CTO / Technical Director -->
         <record id="group_technical_cto" model="res.groups">
-            <field name="name">Technical Service / CTO</field>
+            <field name="name">TSS - CTO</field>
             <field name="category_id" ref="module_category_technical_service_presentation"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
             <field name="comment">Full access to all technical service operations and strategic management</field>
@@ -30,7 +30,7 @@
 
         <!-- Department Manager (Technical) -->
         <record id="group_technical_department_manager" model="res.groups">
-            <field name="name">Technical Service / Department Manager</field>
+            <field name="name">TSS - Department Manager</field>
             <field name="category_id" ref="module_category_technical_service_presentation"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
             <field name="comment">Manages specific technical departments (IT, Facility, Maintenance)</field>
@@ -38,7 +38,7 @@
 
         <!-- Team Leader -->
         <record id="group_technical_team_leader" model="res.groups">
-            <field name="name">Technical Service / Team Leader</field>
+            <field name="name">TSS - Team Leader</field>
             <field name="category_id" ref="module_category_technical_service_presentation"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
             <field name="comment">Manages technical teams and assigns work to technicians</field>
@@ -46,7 +46,7 @@
 
         <!-- Senior Technician -->
         <record id="group_technical_senior_technician" model="res.groups">
-            <field name="name">Technical Service / Senior Technician</field>
+            <field name="name">TSS - Senior Technician</field>
             <field name="category_id" ref="module_category_technical_service_presentation"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
             <field name="comment">Experienced technician with mentoring capabilities</field>
@@ -54,7 +54,7 @@
 
         <!-- Technician -->
         <record id="group_technical_technician" model="res.groups">
-            <field name="name">Technical Service / Technician</field>
+            <field name="name">TSS - Technician</field>
             <field name="category_id" ref="module_category_technical_service_presentation"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
             <field name="comment">Technical staff who execute service requests</field>
@@ -62,7 +62,7 @@
 
         <!-- Dispatcher -->
         <record id="group_technical_dispatcher" model="res.groups">
-            <field name="name">Technical Service / Dispatcher</field>
+            <field name="name">TSS - Dispatcher</field>
             <field name="category_id" ref="module_category_technical_service_presentation"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
             <field name="comment">Coordinates and dispatches technical service requests</field>
@@ -70,7 +70,7 @@
 
         <!-- Location Manager -->
         <record id="group_technical_location_manager" model="res.groups">
-            <field name="name">Technical Service / Location Manager</field>
+            <field name="name">TSS - Location Manager</field>
             <field name="category_id" ref="module_category_technical_service_presentation"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
             <field name="comment">Manages technical services for specific locations</field>
@@ -78,7 +78,7 @@
 
         <!-- Inventory Manager -->
         <record id="group_technical_inventory_manager" model="res.groups">
-            <field name="name">Technical Service / Inventory Manager</field>
+            <field name="name">TSS - Inventory Manager</field>
             <field name="category_id" ref="module_category_technical_service_presentation"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
             <field name="comment">Manages spare parts and inventory for technical services</field>
@@ -90,7 +90,7 @@
 
         <!-- Reporting Officer -->
         <record id="group_technical_reporting" model="res.groups">
-            <field name="name">Technical Service / Reporting Officer</field>
+            <field name="name">TSS - Reporting Officer</field>
             <field name="category_id" ref="module_category_technical_service_presentation"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
             <field name="comment">Read-only access to all reports and analytics</field>
@@ -98,7 +98,7 @@
 
         <!-- External User (Customer/Partner) -->
         <record id="group_technical_external_user" model="res.groups">
-            <field name="name">Technical Service / External User</field>
+            <field name="name">TSS - External User</field>
             <field name="category_id" ref="module_category_technical_service_presentation"/>
             <field name="implied_ids" eval="[(4, ref('base.group_portal'))]"/>
             <field name="comment">External users who can submit and track service requests</field>

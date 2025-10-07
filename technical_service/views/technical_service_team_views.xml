@@ -31,6 +31,7 @@
                                 <group string="Otomatik Atama">
                                     <field name="x_auto_assign"/>
                                     <field name="x_assignment_method" invisible="not x_auto_assign"/>
+                                    <field name="x_is_default_assignment" string="Varsayılan Atama İçin Kullan"/>
                                 </group>
                             </group>
                         </page>
@@ -72,6 +73,7 @@
                     <field name="team_type"/>
                     <field name="team_leader_user_id"/>
                     <field name="x_specialization"/>
+                    <field name="x_is_default_assignment" string="Varsayılan"/>
                     <field name="x_member_count"/>
                     <field name="x_active_requests"/>
                 </xpath>

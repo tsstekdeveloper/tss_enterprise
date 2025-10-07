@@ -101,6 +101,10 @@ class TechnicalServiceTeam(models.Model):
         ('skill_based', 'Skill Based'),
         ('location_based', 'Location Based'),
     ], string='Assignment Method', default='round_robin')
+    x_is_default_assignment = fields.Boolean(
+        string='Use for Default Assignment',
+        help='If checked, this team will be automatically assigned to new service requests. Only one team can be marked as default.'
+    )
 
     @api.depends('x_member_ids')
     def _compute_member_count(self):
@@ -148,6 +152,20 @@ class TechnicalServiceTeam(models.Model):
                 ) / len(completed_requests)
             else:
                 team.x_avg_resolution_time = 0.0
+
+    @api.constrains('x_is_default_assignment')
+    def _check_default_assignment(self):
+        """Ensure only one team is marked as default for assignment"""
+        for team in self:
+            if team.x_is_default_assignment:
+                other_default = self.env['maintenance.team'].search([
+                    ('x_is_default_assignment', '=', True),
+                    ('id', '!=', team.id)
+                ], limit=1)
+                if other_default:
+                    raise ValidationError(
+                        _('Only one team can be marked as default for assignment. Team "%s" is already set as default.') % other_default.name
+                    )
 
     def assign_technician(self, request):
         """Assign best available technician to request"""

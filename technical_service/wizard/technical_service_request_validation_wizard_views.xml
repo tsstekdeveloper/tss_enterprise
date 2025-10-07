@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Validation Warning Wizard Form -->
+    <record id="view_technical_service_request_validation_wizard_form" model="ir.ui.view">
+        <field name="name">technical.service.request.validation.wizard.form</field>
+        <field name="model">technical_service.request.validation.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Oh snap!">
+                <div class="alert alert-warning" role="alertdialog">
+                    <h4 class="alert-heading">
+                        <i class="fa fa-exclamation-triangle"/> Faster Response Tip!
+                    </h4>
+                    <p>Providing description and location information helps us respond more quickly to your request.</p>
+                    <hr/>
+                    <field name="warning_message" nolabel="1"/>
+                    <hr/>
+                    <p class="mb-0">💡 You can still save the request, but complete information helps us serve you better!</p>
+                </div>
+                <field name="request_data" invisible="1"/>
+                <footer>
+                    <button string="Stay Editing" class="btn-secondary" special="cancel" type="object" name="action_stay_editing"/>
+                    <button string="Continue &amp; Save" class="btn-warning" type="object" name="action_continue_save"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard Action -->
+    <record id="action_technical_service_request_validation_wizard" model="ir.actions.act_window">
+        <field name="name">Service Request Validation</field>
+        <field name="res_model">technical_service.request.validation.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

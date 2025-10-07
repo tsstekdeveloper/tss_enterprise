@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError, UserError
+from odoo.exceptions import ValidationError, UserError, RedirectWarning
 from datetime import datetime, timedelta
 
 class TechnicalServiceRequest(models.Model):
@@ -67,7 +67,7 @@ class TechnicalServiceRequest(models.Model):
         ('medium', 'Medium - Normal'),
         ('high', 'High - Urgent'),
         ('critical', 'Critical - Immediate'),
-    ], string='Urgency', default='medium', required=True)
+    ], string='Urgency', default='low', required=True)
 
     x_priority_level = fields.Selection([
         ('p4', 'P4 - Low'),
@@ -104,6 +104,32 @@ class TechnicalServiceRequest(models.Model):
 
     # Technician assignment field (for compatibility with maintenance module)
     technician_user_id = fields.Many2one('res.users', string='Technician', tracking=True)
+
+    # Computed field to check if user can assign technician
+    x_can_assign_technician = fields.Boolean(
+        string='Can Assign Technician',
+        compute='_compute_can_assign_technician',
+        compute_sudo=False,
+        default=lambda self: self._default_can_assign_technician()
+    )
+
+    # Override parent's maintenance_team_id to use our custom default
+    maintenance_team_id = fields.Many2one(
+        'maintenance.team',
+        string='Team',
+        required=True,
+        default=lambda self: self._get_default_team_custom(),
+        tracking=True
+    )
+
+    # Created By User (custom field - independent from parent model)
+    x_owner_user_id = fields.Many2one(
+        'res.users',
+        string='Created By',
+        default=lambda self: self.env.uid,
+        readonly=True,
+        tracking=True
+    )
 
     # Department field for organizational structure
     x_department_id = fields.Many2one('hr.department', string='Department',
@@ -147,6 +173,8 @@ class TechnicalServiceRequest(models.Model):
     x_root_cause = fields.Text(string='Root Cause')
     x_resolution_code = fields.Char(string='Resolution Code')
 
+    # Validation warning fields removed - now handled by wizard
+
     # User Satisfaction & Feedback
     x_user_satisfaction = fields.Selection([
         ('1', 'Very Dissatisfied'),
@@ -157,8 +185,14 @@ class TechnicalServiceRequest(models.Model):
     ], string='User Satisfaction')
     x_user_feedback = fields.Text(string='User Feedback')
 
-    # Customer Feedback fields
-    x_feedback_score = fields.Integer(string='Feedback Score')
+    # Customer Feedback fields (using priority widget - values must be '1' to '5')
+    x_feedback_score = fields.Selection([
+        ('1', 'Very Dissatisfied'),
+        ('2', 'Dissatisfied'),
+        ('3', 'Neutral'),
+        ('4', 'Satisfied'),
+        ('5', 'Very Satisfied'),
+    ], string='Feedback Score', help='Customer satisfaction rating (1-5 stars)')
     x_feedback_date = fields.Datetime(string='Feedback Date')
     x_feedback_comment = fields.Text(string='Feedback Comment')
 
@@ -166,6 +200,27 @@ class TechnicalServiceRequest(models.Model):
     x_escalation_level = fields.Integer(string='Escalation Level', default=0)
     x_escalated_to = fields.Many2one('res.users', string='Escalated To')
     x_escalation_date = fields.Datetime(string='Escalation Date')
+
+    # _compute_validation_warning removed - now handled by wizard
+
+    def _default_can_assign_technician(self):
+        """Default value for can assign technician permission"""
+        user = self.env.user
+        return user._is_superuser() or \
+               user.has_group('technical_service_presentation.group_technical_cto') or \
+               user.has_group('technical_service_presentation.group_technical_department_manager') or \
+               user.has_group('technical_service_presentation.group_technical_team_leader')
+
+    @api.depends_context('uid')
+    def _compute_can_assign_technician(self):
+        """Check if current user can assign technician"""
+        for record in self:
+            user = self.env.user
+            # Allow superusers (admin) and specific roles
+            record.x_can_assign_technician = user._is_superuser() or \
+                                              user.has_group('technical_service_presentation.group_technical_cto') or \
+                                              user.has_group('technical_service_presentation.group_technical_department_manager') or \
+                                              user.has_group('technical_service_presentation.group_technical_team_leader')
 
     @api.depends('x_impact', 'x_urgency')
     def _compute_priority_level(self):
@@ -274,12 +329,61 @@ class TechnicalServiceRequest(models.Model):
             else:
                 record.x_sla_status = 'on_track'
 
+    def _get_default_team_custom(self):
+        """Get default team based on x_is_default_assignment field"""
+        default_team = self.env['maintenance.team'].search([
+            ('x_is_default_assignment', '=', True)
+        ], limit=1)
+        if default_team:
+            return default_team.id
+        # Fallback to standard Odoo behavior if no default team is set
+        team = self.env['maintenance.team'].search([
+            ('company_id', '=', self.env.company.id)
+        ], limit=1)
+        if not team:
+            team = self.env['maintenance.team'].search([], limit=1)
+        return team.id if team else False
+
+    @api.model
+    def default_get(self, fields_list):
+        """Override default_get to set default values when form is opened"""
+        defaults = super().default_get(fields_list)
+
+        # Auto-set employee_id to logged-in user's employee
+        if 'employee_id' in fields_list and not defaults.get('employee_id'):
+            employee = self.env['hr.employee'].search([
+                ('user_id', '=', self.env.uid)
+            ], limit=1)
+            if employee:
+                defaults['employee_id'] = employee.id
+
+
+        return defaults
+
     @api.model_create_multi
     def create(self, vals_list):
-        """Override create to generate request number"""
+        """Override create to generate request number and set default values"""
         for vals in vals_list:
+            # Generate request number
             if vals.get('x_request_number', 'New') == 'New':
                 vals['x_request_number'] = self.env['ir.sequence'].next_by_code('technical.service.request') or 'REQ-001'
+
+            # Auto-set employee_id to logged-in user's employee if not specified
+            if not vals.get('employee_id'):
+                employee = self.env['hr.employee'].search([
+                    ('user_id', '=', self.env.uid)
+                ], limit=1)
+                if employee:
+                    vals['employee_id'] = employee.id
+
+            # Auto-set maintenance_team_id to default team if not specified
+            if not vals.get('maintenance_team_id'):
+                default_team = self.env['maintenance.team'].search([
+                    ('x_is_default_assignment', '=', True)
+                ], limit=1)
+                if default_team:
+                    vals['maintenance_team_id'] = default_team.id
+
         return super().create(vals_list)
 
     @api.onchange('x_service_category')
@@ -292,9 +396,12 @@ class TechnicalServiceRequest(models.Model):
 
     def write(self, vals):
         """Override write to track assignment date"""
+
         if 'technician_user_id' in vals and vals['technician_user_id']:
             vals['x_assigned_date'] = fields.Datetime.now()
         return super().write(vals)
+
+    # Warning system - only informative, doesn't block save
 
     def action_create_work_order(self):
         """Create work order from request"""
@@ -311,40 +418,6 @@ class TechnicalServiceRequest(models.Model):
                 'default_x_technician_id': self.technician_user_id.id,
             }
         }
-
-    def action_assign_technician(self):
-        """Open wizard to assign technician"""
-        self.ensure_one()
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('Assign Technician'),
-            'res_model': 'maintenance.request',
-            'view_mode': 'form',
-            'res_id': self.id,
-            'target': 'new',
-            'context': {'form_view_initial_mode': 'edit'},
-        }
-
-    def action_start_work(self):
-        """Start working on the request"""
-        self.ensure_one()
-        # Find in-progress stage
-        in_progress_stage = self.env['maintenance.stage'].search([('name', 'ilike', 'progress')], limit=1)
-        if not in_progress_stage:
-            in_progress_stage = self.env['maintenance.stage'].search([], limit=1, offset=1)
-        if in_progress_stage:
-            self.stage_id = in_progress_stage
-        return True
-
-    def action_resolve(self):
-        """Mark request as resolved"""
-        self.ensure_one()
-        # Find done stage
-        done_stage = self.env['maintenance.stage'].search([('done', '=', True)], limit=1)
-        if done_stage:
-            self.stage_id = done_stage
-            self.close_date = fields.Date.today()
-        return True
 
     def action_escalate(self):
         """Escalate request to next level"""
@@ -439,4 +512,6 @@ class TechnicalServiceRequest(models.Model):
                 else:
                     args = dept_domain
 
-        return super(TechnicalServiceRequest, self).search(args, offset, limit, order, count)
+        if count:
+            return super(TechnicalServiceRequest, self).search_count(args)
+        return super(TechnicalServiceRequest, self).search(args, offset=offset, limit=limit, order=order)

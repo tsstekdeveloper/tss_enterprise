@@ -16,7 +16,8 @@
             </field>
             <!-- Replace user_id with technician_user_id -->
             <field name="user_id" position="replace">
-                <field name="technician_user_id" string="Technician"/>
+                <field name="technician_user_id" string="Technician" readonly="not x_can_assign_technician"/>
+                <field name="x_can_assign_technician" column_invisible="1"/>
             </field>
             <field name="stage_id" position="before">
                 <field name="x_priority_level" widget="badge" decoration-danger="x_priority_level == 'p1'" decoration-warning="x_priority_level == 'p2'"/>
@@ -30,12 +31,12 @@
         <field name="model">maintenance.request</field>
         <field name="inherit_id" ref="maintenance.hr_equipment_request_view_form"/>
         <field name="arch" type="xml">
-            <!-- Add status bar -->
-            <!-- Add buttons to existing header -->
-            <xpath expr="//header" position="inside">
-                <button name="action_assign_technician" string="Assign Technician" type="object" class="btn-primary" invisible="technician_user_id"/>
-                <button name="action_start_work" string="Start Work" type="object" class="btn-primary" invisible="technician_user_id == False or stage_id.done"/>
-                <button name="action_resolve" string="Resolve" type="object" class="btn-success" invisible="stage_id.done"/>
+            <!-- Hide all buttons from header -->
+            <xpath expr="//button[@name='archive_equipment_request']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='reset_equipment_request']" position="attributes">
+                <attribute name="invisible">1</attribute>
             </xpath>
 
             <!-- Make stage_id non-clickable -->
@@ -49,9 +50,19 @@
                 <widget name="web_ribbon" title="High Priority" bg_color="text-bg-warning" invisible="x_priority_level != 'p2'"/>
             </xpath>
 
+            <!-- Add informative message at top of form for new records -->
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-info" role="status" invisible="id">
+                    <p class="mb-0">
+                        <i class="fa fa-info-circle"/> <b>Hızlı Yanıt İpucu:</b>
+                        Daha hızlı yardım almak için lütfen açıklama, konum bilgisi ve kategori seçimi yapınız.
+                    </p>
+                </div>
+            </xpath>
+
             <!-- Add request number and type -->
 
-            <!-- Reorganize groups -->
+            <!-- Reorganize groups - Only keep REQUEST INFORMATION and ASSIGNMENT visible -->
             <xpath expr="//group" position="replace">
                 <group>
                     <group string="Request Information">
@@ -63,49 +74,49 @@
                         <field name="x_subcategory" invisible="not x_category"/>
                     </group>
                     <group string="Assignment">
+                        <!-- ===== DEBUG FIELDS - VISIBLE ===== -->
+                        <field name="x_can_assign_technician"
+                               string="🔍 DEBUG: Can Assign Technician?"
+                               readonly="1"
+                               widget="boolean"/>
+                        <!-- ===== END DEBUG ===== -->
+
                         <field name="employee_id" string="Requester"/>
-                        <field name="owner_user_id" string="Created By" readonly="1"/>
+                        <field name="x_owner_user_id"/>
                         <field name="maintenance_team_id"/>
-                        <field name="technician_user_id" string="Technician"/>
+
+                        <!-- Technician field with conditional readonly based on permissions -->
+                        <field name="technician_user_id" string="Technician"
+                               readonly="not x_can_assign_technician"
+                               domain="[('share', '=', False)]"/>
+
                         <field name="x_assigned_date" readonly="1"/>
-                    </group>
-                </group>
-                <group>
-                    <group string="Location">
-                        <field name="x_campus_id"/>
-                        <field name="x_building_id" domain="[('campus_id', '=', x_campus_id)]"/>
-                        <field name="x_floor"/>
-                        <field name="x_room"/>
-                        <field name="x_detailed_location"/>
-                    </group>
-                    <group string="SLA Information">
-                        <field name="x_sla_policy_id"/>
-                        <field name="x_sla_deadline" widget="remaining_days"/>
-                        <field name="x_response_deadline" widget="remaining_days"/>
-                        <field name="x_sla_status" widget="badge"/>
-                        <field name="x_escalation_level" invisible="x_escalation_level == 0"/>
-                    </group>
-                </group>
-                <group>
-                    <group string="Dates">
-                        <field name="request_date"/>
-                        <field name="schedule_date"/>
-                        <field name="close_date" readonly="1"/>
-                    </group>
-                    <group string="Time Tracking">
-                        <field name="x_response_time" widget="float_time"/>
-                        <field name="x_resolution_time" widget="float_time"/>
-                        <field name="x_downtime" widget="float_time"/>
                     </group>
                 </group>
             </xpath>
 
-            <!-- Add notebook -->
-            <xpath expr="//sheet/group" position="after">
+            <!-- Replace parent notebook with our tabs -->
+            <xpath expr="//notebook" position="replace">
                 <notebook>
+                    <!-- Tab 1: Description -->
                     <page string="Description" name="description">
-                        <field name="description" widget="html"/>
+                        <field name="description" widget="html" placeholder="Detailed description of the request..."/>
                     </page>
+
+                    <!-- Tab 2: Location -->
+                    <page string="Location" name="location">
+                        <group>
+                            <group string="Location Details">
+                                <field name="x_campus_id"/>
+                                <field name="x_building_id" domain="[('campus_id', '=', x_campus_id)]"/>
+                                <field name="x_floor"/>
+                                <field name="x_room"/>
+                                <field name="x_detailed_location"/>
+                            </group>
+                        </group>
+                    </page>
+
+                    <!-- Tab 3: Work Orders -->
                     <page string="Work Orders" name="work_orders">
                         <field name="x_work_order_ids">
                             <list create="1" delete="1">
@@ -118,22 +129,55 @@
                             </list>
                         </field>
                     </page>
-                    <page string="Resolution" name="resolution" invisible="not x_resolution_description">
+
+                    <!-- Tab 4: SLA & Timing -->
+                    <page string="SLA &amp; Timing" name="sla_timing">
                         <group>
-                            <field name="x_resolution_description" widget="html"/>
-                            <field name="x_root_cause"/>
-                            <field name="x_resolution_code"/>
+                            <group string="SLA Information">
+                                <field name="x_sla_policy_id"/>
+                                <field name="x_sla_deadline" widget="remaining_days"/>
+                                <field name="x_response_deadline" widget="remaining_days"/>
+                                <field name="x_sla_status" widget="badge"/>
+                                <field name="x_escalation_level" invisible="x_escalation_level == 0"/>
+                            </group>
+                            <group string="Time Tracking">
+                                <field name="x_response_time" widget="float_time"/>
+                                <field name="x_resolution_time" widget="float_time"/>
+                                <field name="x_downtime" widget="float_time"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Dates">
+                                <field name="request_date"/>
+                                <field name="schedule_date"/>
+                                <field name="close_date" readonly="1"/>
+                            </group>
                         </group>
                     </page>
-                    <page string="Customer Feedback" name="feedback" invisible="not x_feedback_score">
+
+                    <!-- Tab 5: Customer Feedback -->
+                    <page string="Customer Feedback" name="feedback">
                         <group>
                             <group>
-                                <field name="x_feedback_score" widget="priority"/>
+                                <field name="x_feedback_score" widget="radio" options="{'horizontal': true}"/>
                                 <field name="x_feedback_date"/>
                             </group>
                             <group>
                                 <field name="x_feedback_comment"/>
                             </group>
+                        </group>
+                    </page>
+
+                    <!-- Tab 6: Resolution -->
+                    <page string="Resolution" name="resolution">
+                        <group>
+                            <group>
+                                <field name="x_root_cause"/>
+                                <field name="x_resolution_code"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="x_resolution_description" widget="html"/>
                         </group>
                     </page>
                 </notebook>
