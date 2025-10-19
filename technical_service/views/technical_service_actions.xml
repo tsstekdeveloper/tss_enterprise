@@ -106,7 +106,6 @@
         <field name="name">Ekip Dashboard'i</field>
         <field name="res_model">maintenance.team</field>
         <field name="view_mode">kanban,list,form</field>
-        <field name="view_id" ref="technical_service.view_maintenance_team_kanban"/>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Ekipler listesi

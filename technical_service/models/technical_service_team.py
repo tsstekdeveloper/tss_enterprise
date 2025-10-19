@@ -29,22 +29,73 @@ class TechnicalServiceTeam(models.Model):
         ('mixed', 'Mixed/All'),
     ], string='Team Specialization', default='mixed')
 
-    # Team Type for Role Assignment
-    team_type = fields.Selection([
-        ('operational', 'Operasyonel Ekip'),      # Normal technical teams
-        ('dispatching', 'Dispatching Ekibi'),     # DSP role assignment
-        ('inventory', 'Envanter Ekibi'),          # INV role assignment
-        ('location', 'Lokasyon Ekibi'),           # LCM role assignment
-    ], string='Ekip Tipi', default='operational',
-       help='Ekip tipi, üyelerin otomatik rol atamasını belirler')
+    # ============================================
+    # TASK 06: ORGANIZATIONAL HIERARCHY
+    # Date: 17 October 2024
+    # ============================================
 
-    # Team Leader - Computed from team members
-    team_leader_user_id = fields.Many2one(
-        'res.users',
-        string='Takım Lideri',
-        compute='_compute_team_leader',
+    # Hierarchy Fields
+    parent_id = fields.Many2one(
+        'maintenance.team',
+        string='Üst Ekip',
+        ondelete='restrict',
+        help='Bu ekibin bağlı olduğu üst seviye ekip'
+    )
+
+    child_ids = fields.One2many(
+        'maintenance.team',
+        'parent_id',
+        string='Alt Ekipler'
+    )
+
+    hierarchy_path = fields.Char(
+        string='Hierarchy Path',
+        compute='_compute_hierarchy_path',
         store=True,
-        help='Bu ekibin takım lideri (team members içinden otomatik belirlenir)'
+        index=True,
+        help='Full path: /1/5/23/'
+    )
+
+    hierarchy_level = fields.Integer(
+        string='Seviye',
+        compute='_compute_hierarchy_level',
+        store=True,
+        help='0=Root, 1=Üst Ekip, 2=Alt Ekip'
+    )
+
+    # Team hierarchy permissions
+    can_have_children = fields.Boolean(
+        string='Alt Ekip Eklenebilir',
+        default=True,
+        help='Bu ekibin altına başka ekipler bağlanabilir mi?'
+    )
+
+    # Team active status (for service assignment)
+    is_active = fields.Boolean(
+        string='Aktif',
+        default=True,
+        help='Pasif ekiplere servis talebi atanamaz'
+    )
+
+    # Management
+    department_manager_id = fields.Many2one(
+        'hr.employee',
+        string='Departman Yöneticisi',
+        domain=lambda self: [('user_id.groups_id', 'in', [
+            self.env.ref('technical_service_presentation.group_technical_cto').id,
+            self.env.ref('technical_service_presentation.group_technical_department_manager').id
+        ])],
+        help='Bu ekibin departman yöneticisi (Department Manager veya CTO rolü olan çalışan)'
+    )
+
+    # Team Leader - Employee with Team Leader role
+    team_leader_user_id = fields.Many2one(
+        'hr.employee',
+        string='Takım Lideri',
+        domain=lambda self: [('user_id.groups_id', 'in', [
+            self.env.ref('technical_service_presentation.group_technical_team_leader').id
+        ])],
+        help='Bu ekibin takım lideri (Team Leader rolüne sahip çalışan)'
     )
 
     # Team Members with Skills
@@ -101,9 +152,12 @@ class TechnicalServiceTeam(models.Model):
         ('skill_based', 'Skill Based'),
         ('location_based', 'Location Based'),
     ], string='Assignment Method', default='round_robin')
-    x_is_default_assignment = fields.Boolean(
-        string='Use for Default Assignment',
-        help='If checked, this team will be automatically assigned to new service requests. Only one team can be marked as default.'
+    # TASK 07 - PHASE 6: Default Assignment Team Routing
+    # Date: 18 October 2025
+    x_is_default_assignment_team = fields.Boolean(
+        string='Varsayılan Atama Takımı',
+        default=False,
+        help='Yeni servis talepleri otomatik olarak bu takımın listesinde görünecektir, atanan takımdan bağımsız olarak.'
     )
 
     @api.depends('x_member_ids')
@@ -111,18 +165,29 @@ class TechnicalServiceTeam(models.Model):
         for team in self:
             team.x_member_count = len(team.x_member_ids)
 
-    @api.depends('x_member_ids.member_role', 'x_member_ids.user_id', 'x_member_ids.employee_id.user_id')
-    def _compute_team_leader(self):
-        """Compute team leader from team members with team_leader role"""
+
+    @api.depends('parent_id', 'parent_id.hierarchy_path')
+    def _compute_hierarchy_path(self):
+        """Compute hierarchy path for efficient queries"""
         for team in self:
-            leader_members = team.x_member_ids.filtered(
-                lambda m: m.member_role == 'team_leader' and m.user_id
-            )
-            if leader_members:
-                # Use the first team leader found
-                team.team_leader_user_id = leader_members[0].user_id
+            if team.parent_id:
+                team.hierarchy_path = f"{team.parent_id.hierarchy_path}{team.id}/"
             else:
-                team.team_leader_user_id = False
+                team.hierarchy_path = f"/{team.id}/"
+
+    @api.depends('parent_id')
+    def _compute_hierarchy_level(self):
+        """Compute hierarchy level (depth in tree)"""
+        for team in self:
+            if not team.parent_id:
+                team.hierarchy_level = 0
+            else:
+                level = 1
+                parent = team.parent_id
+                while parent and level < 10:  # Max 10 levels
+                    level += 1
+                    parent = parent.parent_id
+                team.hierarchy_level = level
 
     def _compute_workload(self):
         for team in self:
@@ -153,18 +218,18 @@ class TechnicalServiceTeam(models.Model):
             else:
                 team.x_avg_resolution_time = 0.0
 
-    @api.constrains('x_is_default_assignment')
-    def _check_default_assignment(self):
-        """Ensure only one team is marked as default for assignment"""
+    @api.constrains('x_is_default_assignment_team')
+    def _check_default_assignment_team(self):
+        """Ensure only one team is marked as default for assignment - Task 07 Phase 6"""
         for team in self:
-            if team.x_is_default_assignment:
+            if team.x_is_default_assignment_team:
                 other_default = self.env['maintenance.team'].search([
-                    ('x_is_default_assignment', '=', True),
+                    ('x_is_default_assignment_team', '=', True),
                     ('id', '!=', team.id)
                 ], limit=1)
                 if other_default:
                     raise ValidationError(
-                        _('Only one team can be marked as default for assignment. Team "%s" is already set as default.') % other_default.name
+                        _('Sadece bir takım varsayılan atama takımı olarak işaretlenebilir. "%s" takımı zaten varsayılan olarak ayarlanmış.') % other_default.name
                     )
 
     def assign_technician(self, request):
@@ -239,7 +304,12 @@ class TechnicalServiceTeamMember(models.Model):
     employee_id = fields.Many2one(
         'hr.employee',
         string='Employee',
-        required=True
+        required=True,
+        domain=lambda self: [('user_id.groups_id', 'in', [
+            self.env.ref('technical_service_presentation.group_technical_dispatcher').id,
+            self.env.ref('technical_service_presentation.group_technical_technician').id,
+            self.env.ref('technical_service_presentation.group_technical_senior_technician').id
+        ])]
     )
     user_id = fields.Many2one(
         related='employee_id.user_id',
@@ -255,6 +325,17 @@ class TechnicalServiceTeamMember(models.Model):
         ('technician', 'Teknisyen'),
     ], string='Ekip İçi Rol', default='technician',
        help='Bu üyenin ekip içindeki rolü')
+
+    # TASK 06: TSS Security Roles
+    tss_role_ids = fields.Many2many(
+        'res.groups',
+        'tech_member_tss_role_rel',
+        'member_id',
+        'group_id',
+        string='TSS Rolleri',
+        compute='_compute_tss_roles',
+        help='Bu üyenin TSS security rolleri (user_id\'den)'
+    )
 
     # Skills
     x_skill_category_ids = fields.Many2many(
@@ -312,6 +393,110 @@ class TechnicalServiceTeamMember(models.Model):
     # Assignment tracking
     x_last_assigned_date = fields.Datetime(string='Last Assigned')
 
+    # ============================================
+    # PHASE 1: ORGANIZATIONAL ARCHITECTURE FIELDS
+    # Added: 16 October 2024
+    # ============================================
+
+    # Department Linkage
+    department_id = fields.Many2one(
+        'hr.department',
+        string='Department',
+        compute='_compute_department_from_team',
+        store=True,
+        help='Department derived from team or employee'
+    )
+
+    # HR Job Position
+    job_position_id = fields.Many2one(
+        'hr.job',
+        string='Job Position',
+        related='employee_id.job_id',
+        store=True,
+        readonly=True,
+        help='Job position from HR employee record'
+    )
+
+    # Hierarchy Level (1-5)
+    hierarchy_level = fields.Integer(
+        string='Hierarchy Level',
+        compute='_compute_hierarchy_level',
+        store=True,
+        help='1=CTO, 2=Dept Mgr, 3=Team Lead, 4=Senior Tech, 5=Technician'
+    )
+
+    # Equipment Manager Flag
+    is_equipment_manager = fields.Boolean(
+        string='Equipment Manager Role',
+        default=False,
+        help='Has equipment manager responsibilities (dual role support)'
+    )
+
+    # Matrix Management
+    dotted_line_manager_id = fields.Many2one(
+        'technical_service.team.member',
+        string='Secondary Manager',
+        help='Matrix organization - secondary reporting line'
+    )
+
+    # Delegation System
+    delegation_active = fields.Boolean(
+        string='Delegation Active',
+        compute='_compute_delegation_active',
+        store=True,
+        help='Currently delegating responsibilities'
+    )
+
+    delegation_to_id = fields.Many2one(
+        'technical_service.team.member',
+        string='Delegated To',
+        domain="[('team_id', '=', team_id)]",
+        help='Temporarily delegating work to this member'
+    )
+
+    delegation_start_date = fields.Date(
+        string='Delegation Start'
+    )
+
+    delegation_end_date = fields.Date(
+        string='Delegation End'
+    )
+
+    @api.depends('member_role')
+    def _compute_hierarchy_level(self):
+        """Compute hierarchy level based on role"""
+        for member in self:
+            if member.member_role == 'team_leader':
+                member.hierarchy_level = 3
+            elif member.member_role == 'senior_technician':
+                member.hierarchy_level = 4
+            else:
+                member.hierarchy_level = 5
+
+    @api.depends('team_id', 'employee_id.department_id')
+    def _compute_department_from_team(self):
+        """Compute department from team or employee"""
+        for member in self:
+            if member.employee_id and member.employee_id.department_id:
+                member.department_id = member.employee_id.department_id
+            else:
+                member.department_id = False
+
+    @api.depends('delegation_to_id', 'delegation_start_date', 'delegation_end_date')
+    def _compute_delegation_active(self):
+        """Check if delegation is currently active"""
+        today = fields.Date.today()
+        for member in self:
+            if member.delegation_to_id and member.delegation_start_date:
+                if not member.delegation_end_date or member.delegation_end_date >= today:
+                    if member.delegation_start_date <= today:
+                        member.delegation_active = True
+                        continue
+            member.delegation_active = False
+
+    # End of Phase 1 fields
+    # ============================================
+
     def _compute_workload(self):
         for member in self:
             # Active requests
@@ -337,6 +522,18 @@ class TechnicalServiceTeamMember(models.Model):
             self.x_is_available = True
         else:
             self.x_is_available = False
+
+    @api.depends('user_id.groups_id')
+    def _compute_tss_roles(self):
+        """Compute TSS roles from user's security groups"""
+        for member in self:
+            if member.user_id:
+                tss_groups = member.user_id.groups_id.filtered(
+                    lambda g: g.category_id and g.category_id.name == 'Technical Service Roles'
+                )
+                member.tss_role_ids = tss_groups
+            else:
+                member.tss_role_ids = False
 
     @api.constrains('member_role', 'team_id')
     def _check_single_team_leader(self):

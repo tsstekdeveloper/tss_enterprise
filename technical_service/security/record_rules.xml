@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- TASK 07 - PHASE 6B: Yeni Stage Visibility Rule -->
+        <!-- Only creator, CTO, Department Manager, and Dispatcher can see "Yeni" stage requests -->
+        <!-- Simplified: Non-creators cannot see "Yeni" stage unless they have special roles -->
+        <record id="rule_request_yeni_stage_visibility" model="ir.rule">
+            <field name="name">Service Request: Yeni Stage Visibility</field>
+            <field name="model_id" ref="maintenance.model_maintenance_request"/>
+            <field name="domain_force">[
+                '|',
+                    ('stage_id.name', '!=', 'Yeni'),
+                    ('create_uid', '=', user.id)
+            ]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- TASK 07 - PHASE 6B: Special roles can see all "Yeni" stage requests -->
+        <record id="rule_request_yeni_stage_special_roles" model="ir.rule">
+            <field name="name">Service Request: Yeni Stage - Special Roles</field>
+            <field name="model_id" ref="maintenance.model_maintenance_request"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[
+                (4, ref('technical_service_presentation.group_technical_cto')),
+                (4, ref('technical_service_presentation.group_technical_department_manager')),
+                (4, ref('technical_service_presentation.group_technical_dispatcher'))
+            ]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ================================================================ -->
+        <!-- TASK 07 - PHASE 4A: Role-Based Record Rules                     -->
+        <!-- Date: 18 October 2025                                           -->
+        <!-- ================================================================ -->
+
+        <!-- RULE 1: Technician - See only assigned requests -->
+        <record id="rule_request_technician" model="ir.rule">
+            <field name="name">Technician: Assigned Requests Only</field>
+            <field name="model_id" ref="maintenance.model_maintenance_request"/>
+            <field name="domain_force">[
+                '|',
+                    ('technician_user_id', '=', user.id),
+                    ('create_uid', '=', user.id)
+            ]</field>
+            <field name="groups" eval="[(4, ref('technical_service_presentation.group_technical_technician'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- RULE 2: Senior Technician - See assigned + team requests -->
+        <record id="rule_request_senior_technician" model="ir.rule">
+            <field name="name">Senior Technician: Team Requests</field>
+            <field name="model_id" ref="maintenance.model_maintenance_request"/>
+            <field name="domain_force">[
+                '|', '|',
+                    ('technician_user_id', '=', user.id),
+                    ('maintenance_team_id.x_member_ids.user_id', '=', user.id),
+                    ('create_uid', '=', user.id)
+            ]</field>
+            <field name="groups" eval="[(4, ref('technical_service_presentation.group_technical_senior_technician'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- RULE 3: Team Leader - See all team requests -->
+        <record id="rule_request_team_leader" model="ir.rule">
+            <field name="name">Team Leader: All Team Requests</field>
+            <field name="model_id" ref="maintenance.model_maintenance_request"/>
+            <field name="domain_force">[
+                '|',
+                    ('maintenance_team_id.team_leader_user_id.user_id', '=', user.id),
+                    ('create_uid', '=', user.id)
+            ]</field>
+            <field name="groups" eval="[(4, ref('technical_service_presentation.group_technical_team_leader'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- RULE 4: Dispatcher - See all active requests -->
+        <record id="rule_request_dispatcher" model="ir.rule">
+            <field name="name">Dispatcher: All Active Requests</field>
+            <field name="model_id" ref="maintenance.model_maintenance_request"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('technical_service_presentation.group_technical_dispatcher'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- RULE 5: Department Manager - See department requests -->
+        <record id="rule_request_dept_manager" model="ir.rule">
+            <field name="name">Department Manager: Department Requests</field>
+            <field name="model_id" ref="maintenance.model_maintenance_request"/>
+            <field name="domain_force">[
+                '|',
+                    ('x_department_id', '=', user.employee_id.department_id.id),
+                    ('create_uid', '=', user.id)
+            ]</field>
+            <field name="groups" eval="[(4, ref('technical_service_presentation.group_technical_department_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- RULE 6: CTO - See all requests -->
+        <record id="rule_request_cto" model="ir.rule">
+            <field name="name">CTO: All Requests</field>
+            <field name="model_id" ref="maintenance.model_maintenance_request"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('technical_service_presentation.group_technical_cto'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- RULE 7: Creator/Owner - Always see own requests -->
+        <!-- Note: This is already covered by individual role rules above -->
+        <!-- Each rule includes: ('create_uid', '=', user.id) -->
+
+        <!-- ================================================================ -->
+        <!-- WORK ORDER VISIBILITY RULES                                     -->
+        <!-- ================================================================ -->
+
+        <!-- RULE 8: Technician - See work orders for assigned requests -->
+        <record id="rule_work_order_technician" model="ir.rule">
+            <field name="name">Technician: Work Orders for Assigned Requests</field>
+            <field name="model_id" ref="technical_service.model_technical_service_work_order"/>
+            <field name="domain_force">[
+                '|',
+                    ('x_request_id.technician_user_id', '=', user.id),
+                    ('x_technician_user_id', '=', user.id)
+            ]</field>
+            <field name="groups" eval="[(4, ref('technical_service_presentation.group_technical_technician'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- RULE 9: Team Leader - See team work orders -->
+        <record id="rule_work_order_team_leader" model="ir.rule">
+            <field name="name">Team Leader: Team Work Orders</field>
+            <field name="model_id" ref="technical_service.model_technical_service_work_order"/>
+            <field name="domain_force">[
+                ('x_request_id.maintenance_team_id.team_leader_user_id.user_id', '=', user.id)
+            ]</field>
+            <field name="groups" eval="[(4, ref('technical_service_presentation.group_technical_team_leader'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- RULE 10: Dispatcher/Dept Manager/CTO - See all work orders -->
+        <record id="rule_work_order_management" model="ir.rule">
+            <field name="name">Management: All Work Orders</field>
+            <field name="model_id" ref="technical_service.model_technical_service_work_order"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[
+                (4, ref('technical_service_presentation.group_technical_dispatcher')),
+                (4, ref('technical_service_presentation.group_technical_department_manager')),
+                (4, ref('technical_service_presentation.group_technical_cto'))
+            ]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

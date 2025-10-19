@@ -45,7 +45,10 @@
     'data': [
         'security/technical_service_security.xml',  # Security groups for organization
         'security/ir.model.access.csv',
+        'security/record_rules.xml',  # Task 07 Phase 6B: Record rules for visibility
         'data/sequence_data.xml',
+        'data/technical_service_stages.xml',  # Task 07: Service request stages
+        'data/root_team_data.xml',  # Task 06: Root team for hierarchy
         'views/technical_service_actions.xml',  # Load actions first
         'views/menu_actions.xml',  # Additional menu actions
         'views/missing_actions.xml',  # Missing actions for complete menu structure
@@ -56,8 +59,10 @@
         'views/technical_service_location_views.xml',
         'views/technical_service_sla_views.xml',
         'views/technical_service_team_views.xml',  # Team hierarchy views
+        'views/technical_service_team_hierarchy.xml',  # Task 06: Org hierarchy
         'views/technical_service_preventive_views.xml',  # Add preventive maintenance views
         'views/technical_service_organization_views.xml',  # Technical organization views
+        'views/wizard_views.xml',  # Task 07: Wizard views for manual actions
         'views/technical_service_dashboard.xml',
         'views/technical_service_reports.xml',
         'views/technical_service_menu.xml',  # Menu definitions must be loaded first

@@ -7,56 +7,97 @@
             <field name="model">maintenance.team</field>
             <field name="inherit_id" ref="maintenance.maintenance_team_view_form"/>
             <field name="arch" type="xml">
-                <!-- Add team type and computed team leader after name -->
-                <xpath expr="//field[@name='name']" position="after">
-                    <field name="team_type" string="Ekip Tipi"/>
-                    <field name="team_leader_user_id" string="Takım Lideri" readonly="1" style="font-size: 16px; font-weight: bold;"/>
-                </xpath>
-
                 <!-- Hide the original member_ids field -->
-                <xpath expr="//field[@name='member_ids']" position="attributes">
-                    <attribute name="invisible">1</attribute>
+                <xpath expr="//field[@name='member_ids']" position="replace">
+                    <field name="member_ids" invisible="1"/>
                 </xpath>
 
-                <!-- Add specialization and shift info in a new group -->
-                <xpath expr="//sheet" position="inside">
+                <!-- Replace the entire group structure with better layout -->
+                <xpath expr="//group" position="replace">
+                    <group>
+                        <group string="Genel Bilgiler" name="general_info">
+                            <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                            <field name="team_leader_user_id" string="Takım Lideri" widget="many2one_avatar_employee" options="{'no_create': True}"/>
+                            <field name="x_member_count" string="Toplam Üye Sayısı" readonly="1"/>
+                        </group>
+                        <group string="Uzmanlık ve Vardiya" name="specialization">
+                            <field name="x_specialization"/>
+                            <field name="x_shift_type"/>
+                            <field name="x_current_shift" invisible="x_shift_type != 'shift'"/>
+                        </group>
+                    </group>
+
                     <notebook>
-                        <page string="Teknik Detaylar" name="technical_details">
-                            <group>
-                                <group string="Uzmanlık Alanı">
-                                    <field name="x_specialization"/>
-                                    <field name="x_shift_type"/>
-                                    <field name="x_current_shift" invisible="x_shift_type != 'shift'"/>
-                                </group>
-                                <group string="Otomatik Atama">
-                                    <field name="x_auto_assign"/>
-                                    <field name="x_assignment_method" invisible="not x_auto_assign"/>
-                                    <field name="x_is_default_assignment" string="Varsayılan Atama İçin Kullan"/>
-                                </group>
-                            </group>
-                        </page>
-                        <page string="Üye Detayları" name="member_details">
+                        <page string="Ekip Üyeleri" name="team_members">
                             <field name="x_member_ids">
-                                <list editable="bottom">
-                                    <field name="employee_id"/>
-                                    <field name="user_id"/>
-                                    <field name="member_role"/>
+                                <list editable="bottom" create="1" delete="1">
+                                    <field name="employee_id" required="1"/>
+                                    <field name="user_id" required="1"/>
+                                    <field name="member_role" required="1"/>
                                     <field name="x_skill_level"/>
-                                    <field name="x_availability_status"/>
                                     <field name="x_shift"/>
+                                    <field name="x_availability_status"/>
                                     <field name="x_is_available"/>
                                 </list>
                             </field>
                         </page>
-                        <page string="İş Yükü" name="workload">
+
+                        <page string="İş Yükü ve Performans" name="workload_performance">
                             <group>
-                                <field name="x_active_requests" readonly="1"/>
-                                <field name="x_pending_requests" readonly="1"/>
-                                <field name="x_avg_resolution_time" readonly="1"/>
+                                <group string="Aktif Talepler" name="active_requests">
+                                    <field name="x_active_requests" readonly="1"
+                                           class="oe_inline"
+                                           widget="statinfo"/>
+                                    <field name="x_pending_requests" readonly="1"
+                                           class="oe_inline"
+                                           widget="statinfo"/>
+                                </group>
+                                <group string="Performans Metrikleri" name="performance_metrics">
+                                    <field name="x_avg_resolution_time" readonly="1"
+                                           string="Ortalama Çözüm Süresi (saat)"
+                                           widget="float_time"/>
+                                </group>
                             </group>
                         </page>
-                        <page string="Kapsama Alanları" name="coverage">
-                            <field name="x_campus_ids" widget="many2many_tags"/>
+
+                        <page string="Kapsama Alanları" name="coverage_areas">
+                            <group>
+                                <group string="Kampüsler" name="campuses">
+                                    <field name="x_campus_ids"
+                                           widget="many2many_tags"
+                                           options="{'no_create_edit': True}"
+                                           nolabel="1"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Otomatik Atama Ayarları" name="auto_assignment_config">
+                            <group>
+                                <group string="Atama Yöntemi" name="assignment_method">
+                                    <field name="x_auto_assign"/>
+                                    <field name="x_assignment_method"
+                                           invisible="not x_auto_assign"
+                                           required="x_auto_assign"/>
+                                    <!-- TASK 07 - PHASE 6: Default Assignment Team -->
+                                    <field name="x_is_default_assignment_team"
+                                           string="Varsayılan Atama Takımı"
+                                           help="Bu işaretlenirse, tüm yeni servis talepleri otomatik olarak bu takımın listesinde görünecektir"/>
+                                </group>
+                                <group string="Notlar" name="assignment_notes">
+                                    <p class="text-muted" invisible="x_auto_assign">
+                                        Otomatik atama devre dışı. Talepler manuel olarak atanacak.
+                                    </p>
+                                    <p class="text-muted" invisible="not x_auto_assign or x_assignment_method != 'load'">
+                                        İş yükü dengeli atama: En az aktif talebe sahip teknisyene atama yapılır.
+                                    </p>
+                                    <p class="text-muted" invisible="not x_auto_assign or x_assignment_method != 'skill'">
+                                        Yetenek bazlı atama: Talep tipine uygun en yetenekli teknisyene atama yapılır.
+                                    </p>
+                                    <p class="text-muted" invisible="not x_auto_assign or x_assignment_method != 'round_robin'">
+                                        Sıralı atama: Talepler ekip üyelerine sırasıyla dağıtılır.
+                                    </p>
+                                </group>
+                            </group>
                         </page>
                     </notebook>
                 </xpath>
@@ -70,10 +111,9 @@
             <field name="inherit_id" ref="maintenance.maintenance_team_view_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="after">
-                    <field name="team_type"/>
-                    <field name="team_leader_user_id"/>
+                    <field name="team_leader_user_id" widget="many2one_avatar_employee"/>
                     <field name="x_specialization"/>
-                    <field name="x_is_default_assignment" string="Varsayılan"/>
+                    <field name="x_is_default_assignment_team" string="Varsayılan Atama Takımı"/>
                     <field name="x_member_count"/>
                     <field name="x_active_requests"/>
                 </xpath>
@@ -88,15 +128,6 @@
             <field name="arch" type="xml">
                 <xpath expr="//search" position="inside">
                     <separator/>
-                    <filter string="Operasyonel" name="operational"
-                            domain="[('team_type', '=', 'operational')]"/>
-                    <filter string="Dispatching" name="dispatching"
-                            domain="[('team_type', '=', 'dispatching')]"/>
-                    <filter string="Envanter" name="inventory"
-                            domain="[('team_type', '=', 'inventory')]"/>
-                    <filter string="Lokasyon" name="location"
-                            domain="[('team_type', '=', 'location')]"/>
-                    <separator/>
                     <filter string="IT Ekipleri" name="it"
                             domain="[('x_specialization', '=', 'it')]"/>
                     <filter string="Elektrik Ekipleri" name="electrical"
@@ -104,8 +135,6 @@
                     <filter string="Mekanik Ekipleri" name="mechanical"
                             domain="[('x_specialization', '=', 'mechanical')]"/>
                     <group expand="0" string="Group By">
-                        <filter string="Ekip Tipi" name="group_type"
-                                domain="[]" context="{'group_by':'team_type'}"/>
                         <filter string="Uzmanlık" name="group_spec"
                                 domain="[]" context="{'group_by':'x_specialization'}"/>
                         <filter string="Takım Lideri" name="group_leader"
@@ -122,7 +151,6 @@
             <field name="arch" type="xml">
                 <kanban class="o_kanban_mobile">
                     <field name="name"/>
-                    <field name="team_type"/>
                     <field name="team_leader_user_id"/>
                     <field name="x_specialization"/>
                     <field name="x_member_count"/>
@@ -142,14 +170,9 @@
                                             context="{'active_id': id}">
                                         <i class="fa fa-arrow-right"/>
                                     </button>
-                                    <div class="text-muted">
-                                        <t t-if="record.team_type.raw_value">
-                                            <field name="team_type" widget="badge"/>
-                                        </t>
-                                    </div>
                                     <div t-if="record.team_leader_user_id.raw_value">
                                         <i class="fa fa-user" title="Takım Lideri"/>
-                                        <field name="team_leader_user_id"/>
+                                        <field name="team_leader_user_id" widget="many2one_avatar_employee"/>
                                     </div>
                                     <div class="mt-2 mb-2">
                                         <span class="badge text-bg-primary me-1">

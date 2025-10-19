@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ============================================ -->
+        <!-- TASK 06: TEAM HIERARCHY VIEWS               -->
+        <!-- Date: 17 October 2024                       -->
+        <!-- ============================================ -->
+
+        <!-- Hierarchy View (Org-Chart Style) - ENHANCED VERSION -->
+        <record id="view_maintenance_team_hierarchy" model="ir.ui.view">
+            <field name="name">maintenance.team.hierarchy</field>
+            <field name="model">maintenance.team</field>
+            <field name="arch" type="xml">
+                <hierarchy string="Ekip Hiyerarşisi">
+                    <field name="name"/>
+                    <field name="department_manager_id"/>
+                    <field name="team_leader_user_id"/>
+                    <field name="x_member_count"/>
+                    <field name="x_active_requests"/>
+                    <field name="x_specialization"/>
+                    <field name="can_have_children"/>
+                    <field name="is_active"/>
+                    <field name="hierarchy_level"/>
+                    <templates>
+                        <t t-name="hierarchy-box">
+                            <!-- Dynamic color based on workload -->
+                            <t t-set="member_count" t-value="record.x_member_count.raw_value"/>
+                            <t t-set="active_requests" t-value="record.x_active_requests.raw_value"/>
+                            <t t-set="workload_ratio" t-value="member_count and (active_requests / member_count) or 0"/>
+                            <t t-set="header_color" t-value="
+                                workload_ratio > 2 and '#e74c3c' or
+                                workload_ratio > 1 and '#f39c12' or
+                                workload_ratio > 0 and '#27ae60' or
+                                '#95a5a6'
+                            "/>
+                            <t t-set="status_text" t-value="
+                                workload_ratio > 2 and 'Aşırı Yüklü' or
+                                workload_ratio > 1 and 'Yoğun' or
+                                workload_ratio > 0 and 'Aktif' or
+                                'Boşta'
+                            "/>
+                            <t t-set="status_class" t-value="
+                                workload_ratio > 2 and 'danger' or
+                                workload_ratio > 1 and 'warning' or
+                                workload_ratio > 0 and 'success' or
+                                'secondary'
+                            "/>
+
+                            <!-- Card container with border and shadow -->
+                            <div style="
+                                border: 1px solid #e0e0e0;
+                                border-radius: 6px;
+                                background: white;
+                                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                                overflow: hidden;
+                                height: 100%;
+                                display: flex;
+                                flex-direction: column;
+                            ">
+                                <!-- Enhanced Header with gradient -->
+                                <div class="o_hierarchy_node_header" t-attf-style="
+                                    background: linear-gradient(135deg, {{header_color}} 0%, {{header_color}}dd 100%);
+                                    color: white;
+                                    padding: 10px 12px;
+                                ">
+                                    <div class="d-flex align-items-center justify-content-between" style="gap: 8px;">
+                                        <div style="flex: 1; min-width: 0;">
+                                            <field name="name" class="fw-bold" style="font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"/>
+                                            <t t-if="record.can_have_children.raw_value">
+                                                <i class="fa fa-sitemap text-warning" title="Alt Ekip Eklenebilir" style="font-size: 11px; margin-left: 4px;"/>
+                                            </t>
+                                            <t t-if="!record.is_active.raw_value">
+                                                <i class="fa fa-ban text-danger" title="Pasif Ekip" style="font-size: 11px; margin-left: 4px;"/>
+                                            </t>
+                                        </div>
+                                        <span t-attf-class="badge bg-{{status_class}}" style="font-size: 9px; padding: 2px 6px; white-space: nowrap;">
+                                            <t t-esc="status_text"/>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Enhanced Body with better spacing and visual hierarchy -->
+                                <div class="o_hierarchy_node_body" style="
+                                    padding: 10px 12px 12px 12px;
+                                    background: #ffffff;
+                                    font-size: 11px;
+                                    flex: 1;
+                                ">
+                                <!-- Specialization Badge (if exists) -->
+                                <t t-if="record.x_specialization.raw_value">
+                                    <div style="margin-bottom: 8px;">
+                                        <span class="badge badge-info" style="font-size: 9px; padding: 2px 6px;">
+                                            <i class="fa fa-wrench" style="font-size: 8px;"/> <field name="x_specialization"/>
+                                        </span>
+                                    </div>
+                                </t>
+
+                                <!-- Leadership Info - Compact -->
+                                <div style="background: #f8f9fa; padding: 6px 8px; border-radius: 4px; margin-bottom: 8px; font-size: 10px;">
+                                    <div style="display: flex; align-items: center; margin-bottom: 4px;">
+                                        <i class="fa fa-user-tie text-primary" style="width: 14px; font-size: 10px;"/>
+                                        <span style="color: #6c757d; margin-left: 4px; margin-right: 4px;">Müdür:</span>
+                                        <field name="department_manager_id" widget="many2one_avatar_employee" style="font-size: 10px;"/>
+                                    </div>
+                                    <div style="display: flex; align-items: center;">
+                                        <i class="fa fa-user text-success" style="width: 14px; font-size: 10px;"/>
+                                        <span style="color: #6c757d; margin-left: 4px; margin-right: 4px;">Takım Lideri:</span>
+                                        <field name="team_leader_user_id" widget="many2one_avatar_employee" style="font-size: 10px;"/>
+                                    </div>
+                                </div>
+
+                                <!-- Team Metrics - More Compact -->
+                                <div class="row g-1" style="margin-bottom: 8px;">
+                                    <div class="col-6">
+                                        <div class="text-center" style="background: #e3f2fd; border-radius: 4px; padding: 6px 4px;">
+                                            <i class="fa fa-users text-primary" style="font-size: 14px;"/>
+                                            <div style="margin-top: 2px;">
+                                                <strong style="font-size: 14px;"><field name="x_member_count"/></strong>
+                                                <div style="color: #6c757d; font-size: 9px;">Üye</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-center" t-attf-style="
+                                            background: {{
+                                                workload_ratio > 2 and '#ffebee' or
+                                                workload_ratio > 1 and '#fff8e1' or
+                                                '#e8f5e9'
+                                            }};
+                                            border-radius: 4px;
+                                            padding: 6px 4px;
+                                        ">
+                                            <i t-attf-class="fa fa-tasks text-{{status_class}}" style="font-size: 14px;"/>
+                                            <div style="margin-top: 2px;">
+                                                <strong style="font-size: 14px;"><field name="x_active_requests"/></strong>
+                                                <div style="color: #6c757d; font-size: 9px;">Talep</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Workload Indicator - Compact -->
+                                <div style="padding-bottom: 4px;">
+                                    <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 4px;">
+                                        <small style="color: #6c757d; font-size: 9px;">İş Yükü</small>
+                                        <small t-attf-class="text-{{status_class}} fw-bold" style="font-size: 9px;">
+                                            <t t-esc="workload_ratio.toFixed(1)"/> talep/kişi
+                                        </small>
+                                    </div>
+                                    <div class="progress" style="height: 6px; border-radius: 3px;">
+                                        <div t-attf-class="progress-bar bg-{{status_class}}"
+                                             t-attf-style="width: {{workload_ratio > 3 and 100 or (workload_ratio * 33)}}%"
+                                             role="progressbar"/>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </hierarchy>
+            </field>
+        </record>
+
+        <!-- Enhanced Team Form View -->
+        <record id="view_maintenance_team_form_hierarchy" model="ir.ui.view">
+            <field name="name">maintenance.team.form.hierarchy</field>
+            <field name="model">maintenance.team</field>
+            <field name="inherit_id" ref="technical_service.view_maintenance_team_form_inherit"/>
+            <field name="arch" type="xml">
+                <!-- Add status ribbons at the top -->
+                <xpath expr="//widget[@name='web_ribbon']" position="before">
+                    <!-- Ribbons for important states -->
+                    <widget name="web_ribbon" title="Pasif Ekip"
+                            bg_color="text-bg-danger"
+                            invisible="is_active"/>
+                    <widget name="web_ribbon" title="Alt Ekip Kabul Eder"
+                            bg_color="text-bg-info"
+                            invisible="not can_have_children"/>
+                </xpath>
+
+                <!-- Remove the hierarchy group from here as it will be moved to notebook -->
+                <!-- Fields moved to notebook tab -->
+
+                <!-- Add Hierarchy Tab at the beginning of notebook -->
+                <xpath expr="//notebook/page[1]" position="before">
+                    <!-- Organization Hierarchy Tab (First Tab) -->
+                    <page string="Organizasyon Hiyerarşisi" name="organization_hierarchy">
+                        <group>
+                            <group string="Hiyerarşi Bilgileri">
+                                <field name="parent_id"
+                                       domain="[('can_have_children', '=', True)]"
+                                       options="{'no_create': True}"/>
+                                <field name="hierarchy_level" readonly="1"/>
+                                <field name="hierarchy_path" readonly="1"/>
+                            </group>
+                            <group string="Yönetim Bilgileri">
+                                <field name="department_manager_id"
+                                       widget="many2one_avatar_employee"
+                                       options="{'no_create': True}"/>
+                                <field name="is_active" widget="boolean_toggle"/>
+                                <field name="can_have_children" widget="boolean_toggle"/>
+                                <field name="child_ids" invisible="1"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+
+                <!-- Add Child Teams Tab at the end of notebook -->
+                <xpath expr="//notebook" position="inside">
+                    <page string="Alt Ekipler" name="child_teams" invisible="not child_ids">
+                        <field name="child_ids" mode="list" context="{'default_parent_id': id}">
+                            <list>
+                                <field name="name"/>
+                                <field name="team_leader_user_id" widget="many2one_avatar_employee"/>
+                                <field name="x_member_count"/>
+                                <field name="x_active_requests"/>
+                                <field name="x_specialization"/>
+                                <field name="is_active" widget="boolean_toggle"/>
+                            </list>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Team List View - Add hierarchy info -->
+        <record id="view_maintenance_team_tree_hierarchy" model="ir.ui.view">
+            <field name="name">maintenance.team.tree.hierarchy</field>
+            <field name="model">maintenance.team</field>
+            <field name="inherit_id" ref="maintenance.maintenance_team_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list" position="attributes">
+                    <attribute name="default_order">hierarchy_path</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="parent_id" optional="show"/>
+                    <field name="hierarchy_level" optional="hide"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Hierarchy Action -->
+        <record id="action_team_hierarchy" model="ir.actions.act_window">
+            <field name="name">Organizasyon Hiyerarşisi</field>
+            <field name="res_model">maintenance.team</field>
+            <field name="view_mode">hierarchy,list,form,kanban</field>
+            <field name="domain">[('is_active', '=', True)]</field>
+            <field name="context">{'hierarchy_field': 'parent_id'}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Teknik Ekip Organizasyon Hiyerarşisi
+                </p>
+                <p>
+                    Bu görünümde tüm teknik ekiplerin hiyerarşik yapısını görebilirsiniz.
+                </p>
+            </field>
+        </record>
+
+        <!-- Role Management Views -->
+        <record id="view_res_groups_tss_tree" model="ir.ui.view">
+            <field name="name">res.groups.tss.tree</field>
+            <field name="model">res.groups</field>
+            <field name="arch" type="xml">
+                <list string="TSS Rolleri" create="0" delete="0" edit="0">
+                    <field name="name"/>
+                    <field name="users" widget="many2many_tags"/>
+                    <field name="comment"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="action_tss_role_management" model="ir.actions.act_window">
+            <field name="name">Rol Yönetimi</field>
+            <field name="res_model">res.groups</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('category_id.name', '=', 'Technical Service Roles')]</field>
+            <field name="context">{'search_default_technical_service': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    TSS Security Rolleri
+                </p>
+                <p>
+                    Technical Service security rollerini ve üyelerini yönetin.
+                </p>
+            </field>
+        </record>
+
+        <!-- Enhanced Team Member View - Add TSS Roles -->
+        <!-- TODO: Re-enable when view_team_member_form is created -->
+        <!--
+        <record id="view_team_member_form_tss_roles" model="ir.ui.view">
+            <field name="name">technical_service.team.member.form.tss.roles</field>
+            <field name="model">technical_service.team.member</field>
+            <field name="inherit_id" ref="technical_service.view_team_member_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='member_info']" position="after">
+                    <group string="TSS Security Rolleri" name="tss_roles">
+                        <field name="tss_role_ids" widget="many2many_tags" readonly="1"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+        -->
+
+    </data>
+</odoo>

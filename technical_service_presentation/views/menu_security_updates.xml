@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ============================================ -->
+        <!-- MENU SECURITY UPDATES - Task 05            -->
+        <!-- Date: 17 October 2024                      -->
+        <!-- Purpose: Add missing security groups       -->
+        <!-- ============================================ -->
+
+        <!-- ROOT MENU -->
+        <record id="menu_technical_service_root" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('base.group_user')
+            ])]"/>
+        </record>
+
+        <!-- PARENT MENUS - Add Base User Group (all internal users) -->
+        <record id="menu_dashboard" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('base.group_user')
+            ])]"/>
+        </record>
+
+        <record id="menu_service_requests" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('base.group_user')
+            ])]"/>
+        </record>
+
+        <record id="menu_work_orders" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('group_technical_technician'),
+                ref('group_technical_senior_technician'),
+                ref('group_technical_team_leader'),
+                ref('group_technical_department_manager'),
+                ref('group_technical_cto')
+            ])]"/>
+        </record>
+
+        <record id="menu_assets" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('base.group_user')
+            ])]"/>
+        </record>
+
+        <record id="menu_reports" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('base.group_user')
+            ])]"/>
+        </record>
+
+        <!-- TEAM MANAGEMENT SUB-MENUS -->
+        <record id="menu_team_members" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('group_technical_team_leader'),
+                ref('group_technical_department_manager'),
+                ref('group_technical_cto')
+            ])]"/>
+        </record>
+
+        <record id="menu_team_shifts" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('group_technical_team_leader'),
+                ref('group_technical_department_manager'),
+                ref('group_technical_cto')
+            ])]"/>
+        </record>
+
+        <record id="menu_team_performance" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('group_technical_team_leader'),
+                ref('group_technical_department_manager'),
+                ref('group_technical_cto')
+            ])]"/>
+        </record>
+
+        <record id="menu_teams" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('group_technical_team_leader'),
+                ref('group_technical_department_manager'),
+                ref('group_technical_cto')
+            ])]"/>
+        </record>
+
+        <!-- TECHNICAL ORGANIZATION SUB-MENUS (CTO Only) -->
+        <record id="menu_organization_structure" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('group_technical_cto')
+            ])]"/>
+        </record>
+
+        <record id="menu_organization_positions" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('group_technical_cto')
+            ])]"/>
+        </record>
+
+        <record id="menu_organization_assignments" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('group_technical_cto')
+            ])]"/>
+        </record>
+
+        <!-- LOCATION MANAGEMENT SUB-MENUS -->
+        <record id="menu_location_campus" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('group_technical_location_manager'),
+                ref('group_technical_department_manager'),
+                ref('group_technical_cto')
+            ])]"/>
+        </record>
+
+        <record id="menu_location_building" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('group_technical_location_manager'),
+                ref('group_technical_department_manager'),
+                ref('group_technical_cto')
+            ])]"/>
+        </record>
+
+        <record id="menu_location_areas" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('group_technical_location_manager'),
+                ref('group_technical_department_manager'),
+                ref('group_technical_cto')
+            ])]"/>
+        </record>
+
+        <!-- INVENTORY SUB-MENUS -->
+        <record id="menu_inventory_stock" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('group_technical_inventory_manager'),
+                ref('group_technical_team_leader'),
+                ref('group_technical_department_manager'),
+                ref('group_technical_cto')
+            ])]"/>
+        </record>
+
+        <record id="menu_inventory_assets" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('group_technical_inventory_manager'),
+                ref('group_technical_department_manager'),
+                ref('group_technical_cto')
+            ])]"/>
+        </record>
+
+        <!-- REPORTS SUB-MENUS -->
+        <record id="menu_report_requests" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('base.group_user')
+            ])]"/>
+        </record>
+
+        <!-- DASHBOARD SUB-MENUS (My views) -->
+        <record id="menu_dashboard_my" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('base.group_user')
+            ])]"/>
+        </record>
+
+        <!-- SERVICE REQUEST SUB-MENUS (My views) -->
+        <record id="menu_request_my" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('base.group_user')
+            ])]"/>
+        </record>
+
+        <!-- ASSET SUB-MENUS -->
+        <record id="menu_assets_equipment" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('base.group_user')
+            ])]"/>
+        </record>
+
+        <!-- CONFIGURATION SUB-MENUS -->
+        <record id="menu_config_general" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('group_technical_cto'),
+                ref('base.group_system')
+            ])]"/>
+        </record>
+
+        <record id="menu_config_users" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('group_technical_cto'),
+                ref('base.group_system')
+            ])]"/>
+        </record>
+
+        <record id="menu_config_sla" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('group_technical_cto'),
+                ref('group_technical_department_manager')
+            ])]"/>
+        </record>
+
+        <record id="menu_config_priorities" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('group_technical_cto'),
+                ref('group_technical_department_manager')
+            ])]"/>
+        </record>
+
+        <record id="menu_config_categories" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[
+                ref('group_technical_cto'),
+                ref('group_technical_department_manager')
+            ])]"/>
+        </record>
+
+    </data>
+</odoo>

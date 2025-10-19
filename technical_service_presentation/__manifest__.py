@@ -53,6 +53,8 @@
         'security/technical_service_presentation_rules.xml',
         'security/ir.model.access.csv',
         'views/menu_structure.xml',
+        'views/menu_security_updates.xml',  # Task 05 Phase 5A.1 - Menu security groups
+        'views/menu_organization_new.xml',  # Task 06: Merged org & teams menu
         'data/admin_permissions.xml',
     ],
 

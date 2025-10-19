@@ -171,8 +171,51 @@ class TechnicalServiceWorkOrder(models.Model):
         for record in self:
             record.x_actual_duration = sum(record.x_time_log_ids.mapped('duration'))
 
+    # ============================================
+    # CREATE HOOK (Task 07 - Phase 2C)
+    # ============================================
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """
+        Override create to:
+        1. Create work order
+        2. Transition parent request to 'İş Emri Oluşturuldu' (Task 07 - Phase 2C)
+        3. Log work order creation in request history
+        """
+        records = super().create(vals_list)
+
+        for record in records:
+            # Task 07 - Phase 2C: Transition request to 'İş Emri Oluşturuldu'
+            if record.x_request_id:
+                request = record.x_request_id
+
+                # Only transition if currently in 'Ekip Atandı' or 'Yeni'
+                if request.stage_id.name in ['Yeni', 'Ekip Atandı']:
+                    request._transition_to_stage(
+                        'İş Emri Oluşturuldu',
+                        reason=_('Work order created: %s', record.name)
+                    )
+
+                # Log work order event in request history
+                self.env['technical_service.request.history'].log_work_order_event(
+                    request=request,
+                    work_order=record,
+                    status_text=_('Created'),
+                    note=_('Work order created with status: %s', dict(record._fields['x_work_status'].selection).get(record.x_work_status))
+                )
+
+        return records
+
+    # ============================================
+    # ACTION METHODS (Task 07 - Phase 2D)
+    # ============================================
+
     def action_start_work(self):
-        """Start work order and create time log"""
+        """
+        Start work order and create time log
+        Task 07 - Phase 2D: Transition request to 'Devam Ediyor'
+        """
         self.ensure_one()
         if self.x_work_status != 'pending':
             raise UserError(_('Work order must be in pending status to start.'))
@@ -188,6 +231,25 @@ class TechnicalServiceWorkOrder(models.Model):
             'start_time': fields.Datetime.now(),
             'technician_id': self.x_technician_id.id,
         })
+
+        # Task 07 - Phase 2D: Transition request to 'Devam Ediyor'
+        if self.x_request_id:
+            request = self.x_request_id
+
+            # Transition to 'Devam Ediyor' if not already there
+            if request.stage_id.name != 'Devam Ediyor':
+                request._transition_to_stage(
+                    'Devam Ediyor',
+                    reason=_('Work started on work order: %s', self.name)
+                )
+
+            # Log work order start
+            self.env['technical_service.request.history'].log_work_order_event(
+                request=request,
+                work_order=self,
+                status_text=_('Started'),
+                note=_('Work order started by %s', self.x_technician_id.name if self.x_technician_id else 'Unknown')
+            )
 
         return True
 
@@ -224,7 +286,11 @@ class TechnicalServiceWorkOrder(models.Model):
         return True
 
     def action_complete_work(self):
-        """Complete work order"""
+        """
+        Complete work order
+        Task 07 - Phase 2D: Check if all work orders done, stay in 'Devam Ediyor'
+        (Will NOT auto-complete request - requires manual approval flow)
+        """
         self.ensure_one()
         if self.x_work_status not in ['in_progress', 'paused']:
             raise UserError(_('Work must be in progress or paused to complete.'))
@@ -239,17 +305,42 @@ class TechnicalServiceWorkOrder(models.Model):
             'x_end_datetime': fields.Datetime.now(),
         })
 
-        # Update request status if all work orders are completed
+        # Task 07 - Phase 2D: Log work order completion
         if self.x_request_id:
+            request = self.x_request_id
+
+            # Log work order completion
+            self.env['technical_service.request.history'].log_work_order_event(
+                request=request,
+                work_order=self,
+                status_text=_('Completed'),
+                note=_('Work order completed. Duration: %.2f hours', self.x_actual_duration)
+            )
+
+            # Check if ALL work orders are completed
             all_completed = all(
                 wo.x_work_status == 'completed'
-                for wo in self.x_request_id.x_work_order_ids
+                for wo in request.x_work_order_ids
             )
+
             if all_completed:
-                # Find done stage
-                done_stage = self.env['maintenance.stage'].search([('done', '=', True)], limit=1)
-                if done_stage:
-                    self.x_request_id.stage_id = done_stage
+                # All work orders done - request stays in 'Devam Ediyor'
+                # User must manually send to 'Onayda' using the button
+                # This is intentional per Task 07 requirements
+
+                # Add a note to history
+                self.env['technical_service.request.history'].create({
+                    'request_id': request.id,
+                    'event_type': 'comment',
+                    'note': _('All work orders completed. Ready for approval submission.'),
+                    'is_automatic': True,
+                })
+
+                # Post message to chatter
+                request.message_post(
+                    body=_('✓ All work orders have been completed. The request is ready to be sent for approval.'),
+                    message_type='notification'
+                )
 
         return True
 

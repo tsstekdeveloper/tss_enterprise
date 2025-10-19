@@ -7,9 +7,14 @@
         <field name="inherit_id" ref="maintenance.hr_equipment_request_view_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//list" position="attributes">
+                <!-- Priority decorations -->
                 <attribute name="decoration-danger">x_priority_level == 'p1'</attribute>
                 <attribute name="decoration-warning">x_priority_level == 'p2'</attribute>
                 <attribute name="decoration-info">x_priority_level == 'p3'</attribute>
+                <!-- Stage-based decorations - Task 07 Phase 5B -->
+                <attribute name="decoration-muted">stage_id and (stage_id.name in ['Beklemede', 'İptal Edildi'])</attribute>
+                <attribute name="decoration-success">stage_id and stage_id.name == 'Tamamlandı'</attribute>
+                <attribute name="decoration-bf">stage_id and stage_id.name in ['Devam Ediyor', 'İş Emri Oluşturuldu']</attribute>
             </xpath>
             <field name="name" position="after">
                 <field name="x_request_type"/>
@@ -39,9 +44,65 @@
                 <attribute name="invisible">1</attribute>
             </xpath>
 
-            <!-- Make stage_id non-clickable -->
+            <!-- Make stage_id non-clickable - Task 07 Business Logic Fix -->
             <xpath expr="//field[@name='stage_id']" position="attributes">
-                <attribute name="options">{'clickable': '0'}</attribute>
+                <attribute name="clickable">False</attribute>
+                <attribute name="readonly">1</attribute>
+            </xpath>
+
+            <!-- Task 07 - Phase 3F: Add workflow action buttons to header -->
+            <xpath expr="//field[@name='stage_id']" position="after">
+                <!-- Put On Hold Button -->
+                <button name="action_put_on_hold"
+                        string="Put On Hold"
+                        type="object"
+                        class="btn-warning"
+                        invisible="not x_can_put_on_hold"
+                        help="Put this request on hold temporarily"/>
+
+                <!-- Send For Approval Button -->
+                <button name="action_send_for_approval"
+                        string="Send For Approval"
+                        type="object"
+                        class="btn-primary"
+                        invisible="not x_can_send_for_approval"
+                        help="Send this request for manager approval"/>
+
+                <!-- Approve Button -->
+                <button name="action_approve"
+                        string="Approve"
+                        type="object"
+                        class="btn-success"
+                        invisible="not x_can_approve"
+                        help="Approve and complete this request"/>
+
+                <!-- Reject Button -->
+                <button name="action_reject"
+                        string="Reject"
+                        type="object"
+                        class="btn-danger"
+                        invisible="not x_can_reject"
+                        help="Reject this request"/>
+
+                <!-- Cancel Button -->
+                <button name="action_cancel"
+                        string="Cancel"
+                        type="object"
+                        class="btn-secondary"
+                        invisible="not x_can_cancel"
+                        help="Cancel this request"/>
+
+                <!-- Hidden fields for button visibility -->
+                <field name="x_can_put_on_hold" invisible="1"/>
+                <field name="x_can_send_for_approval" invisible="1"/>
+                <field name="x_can_approve" invisible="1"/>
+                <field name="x_can_reject" invisible="1"/>
+                <field name="x_can_cancel" invisible="1"/>
+            </xpath>
+
+            <!-- Make name field readonly for standard users and final stages -->
+            <xpath expr="//div[@class='oe_title']//field[@name='name']" position="attributes">
+                <attribute name="readonly">x_is_standard_user or x_is_final_stage</attribute>
             </xpath>
 
             <!-- Add priority badge -->
@@ -66,30 +127,20 @@
             <xpath expr="//group" position="replace">
                 <group>
                     <group string="Request Information">
-                        <field name="x_request_type" required="1"/>
-                        <field name="x_impact"/>
-                        <field name="x_urgency"/>
+                        <field name="x_request_type" required="1" readonly="x_is_standard_user"/>
+                        <field name="x_impact" readonly="x_is_standard_user"/>
+                        <field name="x_urgency" readonly="x_is_standard_user"/>
                         <field name="x_priority_level" widget="badge"/>
-                        <field name="x_category"/>
-                        <field name="x_subcategory" invisible="not x_category"/>
+                        <field name="x_category" readonly="x_is_standard_user"/>
+                        <field name="x_subcategory" invisible="not x_category" readonly="x_is_standard_user"/>
                     </group>
                     <group string="Assignment">
-                        <!-- ===== DEBUG FIELDS - VISIBLE ===== -->
-                        <field name="x_can_assign_technician"
-                               string="🔍 DEBUG: Can Assign Technician?"
-                               readonly="1"
-                               widget="boolean"/>
-                        <!-- ===== END DEBUG ===== -->
-
-                        <field name="employee_id" string="Requester"/>
+                        <field name="x_is_standard_user" invisible="1"/>
+                        <field name="x_can_edit_work_orders" invisible="1"/>
+                        <field name="x_is_final_stage" invisible="1"/>
+                        <field name="employee_id" string="Requester" readonly="x_is_standard_user"/>
                         <field name="x_owner_user_id"/>
-                        <field name="maintenance_team_id"/>
-
-                        <!-- Technician field with conditional readonly based on permissions -->
-                        <field name="technician_user_id" string="Technician"
-                               readonly="not x_can_assign_technician"
-                               domain="[('share', '=', False)]"/>
-
+                        <field name="maintenance_team_id" domain="[('is_active', '=', True)]" readonly="x_is_standard_user"/>
                         <field name="x_assigned_date" readonly="1"/>
                     </group>
                 </group>
@@ -100,26 +151,87 @@
                 <notebook>
                     <!-- Tab 1: Description -->
                     <page string="Description" name="description">
-                        <field name="description" widget="html" placeholder="Detailed description of the request..."/>
+                        <field name="description" widget="html" placeholder="Detailed description of the request..." readonly="x_is_standard_user"/>
                     </page>
 
                     <!-- Tab 2: Location -->
                     <page string="Location" name="location">
                         <group>
                             <group string="Location Details">
-                                <field name="x_campus_id"/>
-                                <field name="x_building_id" domain="[('campus_id', '=', x_campus_id)]"/>
-                                <field name="x_floor"/>
-                                <field name="x_room"/>
-                                <field name="x_detailed_location"/>
+                                <field name="x_campus_id" readonly="x_is_standard_user"/>
+                                <field name="x_building_id" domain="[('campus_id', '=', x_campus_id)]" readonly="x_is_standard_user"/>
+                                <field name="x_floor" readonly="x_is_standard_user"/>
+                                <field name="x_room" readonly="x_is_standard_user"/>
+                                <field name="x_detailed_location" readonly="x_is_standard_user"/>
                             </group>
                         </group>
                     </page>
 
-                    <!-- Tab 3: Work Orders -->
-                    <page string="Work Orders" name="work_orders">
-                        <field name="x_work_order_ids">
-                            <list create="1" delete="1">
+                    <!-- Tab 3: History - Task 07 Phase 5A -->
+                    <page string="History" name="history">
+                        <field name="x_history_ids" readonly="1">
+                            <list create="0" delete="0" edit="0" string="Request History">
+                                <field name="timestamp" widget="datetime"/>
+                                <field name="event_type" widget="badge" decoration-info="event_type == 'stage_change'" decoration-success="event_type == 'approval'" decoration-warning="event_type == 'hold'" decoration-danger="event_type == 'cancellation'"/>
+                                <field name="user_id"/>
+                                <field name="old_stage_id" optional="hide"/>
+                                <field name="new_stage_id"/>
+                                <field name="stage_change_duration" widget="float_time" string="Duration (h)" optional="show"/>
+                                <field name="is_automatic" invisible="1"/>
+                            </list>
+                            <form create="0" edit="0" delete="0">
+                                <sheet>
+                                    <group>
+                                        <group>
+                                            <field name="event_type" readonly="1"/>
+                                            <field name="timestamp" readonly="1"/>
+                                            <field name="user_id" readonly="1"/>
+                                            <field name="is_automatic" readonly="1"/>
+                                        </group>
+                                        <group>
+                                            <field name="old_stage_id" readonly="1" invisible="not old_stage_id"/>
+                                            <field name="new_stage_id" readonly="1" invisible="not new_stage_id"/>
+                                            <field name="stage_change_duration" widget="float_time" readonly="1" invisible="not stage_change_duration"/>
+                                        </group>
+                                    </group>
+                                    <group string="Assignment Changes" invisible="event_type != 'assignment'">
+                                        <group>
+                                            <field name="old_team_id" readonly="1"/>
+                                            <field name="new_team_id" readonly="1"/>
+                                        </group>
+                                        <group>
+                                            <field name="old_technician_id" readonly="1"/>
+                                            <field name="new_technician_id" readonly="1"/>
+                                        </group>
+                                    </group>
+                                    <group string="Work Order" invisible="event_type != 'work_order'">
+                                        <field name="work_order_id" readonly="1"/>
+                                        <field name="work_order_status" readonly="1"/>
+                                    </group>
+                                    <group string="Approval" invisible="event_type != 'approval'">
+                                        <field name="approval_status" readonly="1"/>
+                                    </group>
+                                    <group string="Notes">
+                                        <field name="note" readonly="1" nolabel="1"/>
+                                        <field name="reason" readonly="1" nolabel="1" invisible="not reason"/>
+                                    </group>
+                                    <separator string="Description"/>
+                                    <field name="description" readonly="1" nolabel="1" widget="html"/>
+                                </sheet>
+                            </form>
+                        </field>
+                    </page>
+
+                    <!-- Tab 4: Work Orders - Task 07 Phase 5D: Added count badge -->
+                    <page string="Work Orders" name="work_orders" readonly="not x_can_edit_work_orders">
+                        <div class="alert alert-info mb-3" role="alert">
+                            <i class="fa fa-info-circle"></i>
+                            <strong>Work Orders:</strong>
+                            <field name="x_work_order_count" class="ms-2" readonly="1"/>
+                            total work order(s) for this request
+                        </div>
+                        <field name="x_work_order_ids" readonly="not x_can_edit_work_orders">
+                            <list create="x_can_edit_work_orders" delete="x_can_edit_work_orders">
                                 <field name="name"/>
                                 <field name="x_work_type"/>
                                 <field name="x_technician_id"/>
@@ -130,11 +242,11 @@
                         </field>
                     </page>
 
-                    <!-- Tab 4: SLA & Timing -->
-                    <page string="SLA &amp; Timing" name="sla_timing">
+                    <!-- Tab 5: SLA & Timing -->
+                    <page string="SLA &amp; Timing" name="sla_timing" readonly="x_is_standard_user">
                         <group>
                             <group string="SLA Information">
-                                <field name="x_sla_policy_id"/>
+                                <field name="x_sla_policy_id" readonly="x_is_standard_user"/>
                                 <field name="x_sla_deadline" widget="remaining_days"/>
                                 <field name="x_response_deadline" widget="remaining_days"/>
                                 <field name="x_sla_status" widget="badge"/>
@@ -143,41 +255,41 @@
                             <group string="Time Tracking">
                                 <field name="x_response_time" widget="float_time"/>
                                 <field name="x_resolution_time" widget="float_time"/>
-                                <field name="x_downtime" widget="float_time"/>
+                                <field name="x_downtime" widget="float_time" readonly="x_is_standard_user"/>
                             </group>
                         </group>
                         <group>
                             <group string="Dates">
-                                <field name="request_date"/>
-                                <field name="schedule_date"/>
+                                <field name="request_date" readonly="x_is_standard_user"/>
+                                <field name="schedule_date" readonly="x_is_standard_user"/>
                                 <field name="close_date" readonly="1"/>
                             </group>
                         </group>
                     </page>
 
-                    <!-- Tab 5: Customer Feedback -->
-                    <page string="Customer Feedback" name="feedback">
+                    <!-- Tab 6: Customer Feedback -->
+                    <page string="Customer Feedback" name="feedback" readonly="x_is_standard_user">
                         <group>
                             <group>
-                                <field name="x_feedback_score" widget="radio" options="{'horizontal': true}"/>
-                                <field name="x_feedback_date"/>
+                                <field name="x_feedback_score" widget="radio" options="{'horizontal': true}" readonly="x_is_standard_user"/>
+                                <field name="x_feedback_date" readonly="x_is_standard_user"/>
                             </group>
                             <group>
-                                <field name="x_feedback_comment"/>
+                                <field name="x_feedback_comment" readonly="x_is_standard_user"/>
                             </group>
                         </group>
                     </page>
 
-                    <!-- Tab 6: Resolution -->
-                    <page string="Resolution" name="resolution">
+                    <!-- Tab 7: Resolution -->
+                    <page string="Resolution" name="resolution" readonly="not x_can_edit_work_orders">
                         <group>
                             <group>
-                                <field name="x_root_cause"/>
-                                <field name="x_resolution_code"/>
+                                <field name="x_root_cause" readonly="not x_can_edit_work_orders"/>
+                                <field name="x_resolution_code" readonly="not x_can_edit_work_orders"/>
                             </group>
                         </group>
                         <group>
-                            <field name="x_resolution_description" widget="html"/>
+                            <field name="x_resolution_description" widget="html" readonly="not x_can_edit_work_orders"/>
                         </group>
                     </page>
                 </notebook>

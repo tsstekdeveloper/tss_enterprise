@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!--
+            Technical Service Request Stages
+            Based on customer requirements:
+            1. Yeni → 2. Ekip Atandı → 3. Beklemede → 4. İş Emri Oluşturuldu →
+            5. Devam Ediyor → 6. Onayda → 7. Tamamlandı / 8. Reddedildi / 9. İptal Edildi
+        -->
+
+        <!-- Stage 1: Yeni (New) -->
+        <record id="stage_new" model="maintenance.stage">
+            <field name="name">Yeni</field>
+            <field name="sequence" eval="1"/>
+            <field name="fold" eval="False"/>
+            <field name="done" eval="False"/>
+        </record>
+
+        <!-- Stage 2: Ekip Atandı (Team Assigned) -->
+        <record id="stage_team_assigned" model="maintenance.stage">
+            <field name="name">Ekip Atandı</field>
+            <field name="sequence" eval="2"/>
+            <field name="fold" eval="False"/>
+            <field name="done" eval="False"/>
+        </record>
+
+        <!-- Stage 3: Beklemede (On Hold) -->
+        <record id="stage_on_hold" model="maintenance.stage">
+            <field name="name">Beklemede</field>
+            <field name="sequence" eval="3"/>
+            <field name="fold" eval="False"/>
+            <field name="done" eval="False"/>
+        </record>
+
+        <!-- Stage 4: İş Emri Oluşturuldu (Work Order Created) -->
+        <record id="stage_work_order_created" model="maintenance.stage">
+            <field name="name">İş Emri Oluşturuldu</field>
+            <field name="sequence" eval="4"/>
+            <field name="fold" eval="False"/>
+            <field name="done" eval="False"/>
+        </record>
+
+        <!-- Stage 5: Devam Ediyor (In Progress) -->
+        <record id="stage_in_progress" model="maintenance.stage">
+            <field name="name">Devam Ediyor</field>
+            <field name="sequence" eval="5"/>
+            <field name="fold" eval="False"/>
+            <field name="done" eval="False"/>
+        </record>
+
+        <!-- Stage 6: Onayda (Pending Approval) -->
+        <record id="stage_pending_approval" model="maintenance.stage">
+            <field name="name">Onayda</field>
+            <field name="sequence" eval="6"/>
+            <field name="fold" eval="False"/>
+            <field name="done" eval="False"/>
+        </record>
+
+        <!-- Stage 7: Tamamlandı (Completed) -->
+        <record id="stage_completed" model="maintenance.stage">
+            <field name="name">Tamamlandı</field>
+            <field name="sequence" eval="7"/>
+            <field name="fold" eval="True"/>
+            <field name="done" eval="True"/>
+        </record>
+
+        <!-- Stage 8: Reddedildi (Rejected) -->
+        <record id="stage_rejected" model="maintenance.stage">
+            <field name="name">Reddedildi</field>
+            <field name="sequence" eval="8"/>
+            <field name="fold" eval="True"/>
+            <field name="done" eval="True"/>
+        </record>
+
+        <!-- Stage 9: İptal Edildi (Cancelled) -->
+        <record id="stage_cancelled" model="maintenance.stage">
+            <field name="name">İptal Edildi</field>
+            <field name="sequence" eval="9"/>
+            <field name="fold" eval="True"/>
+            <field name="done" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- ============================================ -->
+        <!-- TASK 06: ROOT TEAM DATA                     -->
+        <!-- Date: 17 October 2024                       -->
+        <!-- ============================================ -->
+
+        <!-- Virtual Root Team: Facility Management Upper Team -->
+        <record id="team_facility_management_root" model="maintenance.team">
+            <field name="name">Tesis Yönetimi Üst Ekibi</field>
+            <field name="can_have_children" eval="True"/>
+            <field name="is_active" eval="True"/>
+            <field name="active" eval="True"/>
+            <!-- Specialization: Leave empty for root team (coordinates all types) -->
+            <!-- Department manager will be assigned by CTO -->
+            <!-- Team leader will be auto-computed from team members -->
+        </record>
+
+        <!-- Note: Existing teams should be manually assigned to this root team -->
+        <!-- via Team form view's parent_id field after installation -->
+
+    </data>
+</odoo>

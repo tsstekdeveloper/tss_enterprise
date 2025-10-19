@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Put On Hold Wizard -->
+    <record id="view_request_put_on_hold_wizard_form" model="ir.ui.view">
+        <field name="name">request.put.on.hold.wizard.form</field>
+        <field name="model">technical_service.request.put.on.hold.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Put Request On Hold">
+                <group>
+                    <field name="request_id" invisible="1"/>
+                    <field name="reason" placeholder="Explain why this request needs to be put on hold..."/>
+                    <field name="expected_resume_date"/>
+                </group>
+                <footer>
+                    <button string="Confirm" name="action_confirm_hold" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Reject Wizard -->
+    <record id="view_request_reject_wizard_form" model="ir.ui.view">
+        <field name="name">request.reject.wizard.form</field>
+        <field name="model">technical_service.request.reject.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Reject Request">
+                <field name="request_id" invisible="1"/>
+                <field name="is_cancel_rejection" invisible="1"/>
+
+                <!-- Warning for completion rejection -->
+                <div class="alert alert-warning" role="alert" invisible="is_cancel_rejection">
+                    <strong>Important:</strong> Rejecting this request requires creating a new corrected request.
+                </div>
+
+                <!-- Info for cancel rejection -->
+                <div class="alert alert-info" role="alert" invisible="not is_cancel_rejection">
+                    <strong>Cancel Request Rejection:</strong> The request will be returned to its previous stage.
+                </div>
+
+                <group>
+                    <field name="rejection_reason" placeholder="Explain why this is being rejected..."/>
+                </group>
+
+                <!-- New request fields - only for completion rejection -->
+                <group string="New Request Information" invisible="is_cancel_rejection">
+                    <field name="new_request_name" placeholder="Enter title for the new request..." required="not is_cancel_rejection"/>
+                    <field name="new_request_description" placeholder="Describe what needs to be done correctly..." required="not is_cancel_rejection"/>
+                    <field name="copy_attachments"/>
+                </group>
+
+                <footer>
+                    <button string="Reject and Create New Request" name="action_confirm_reject" type="object" class="btn-primary" invisible="is_cancel_rejection"/>
+                    <button string="Reject Cancel Request" name="action_confirm_reject" type="object" class="btn-danger" invisible="not is_cancel_rejection"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Cancel Wizard -->
+    <record id="view_request_cancel_wizard_form" model="ir.ui.view">
+        <field name="name">request.cancel.wizard.form</field>
+        <field name="model">technical_service.request.cancel.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Cancel Service Request">
+                <div class="alert alert-info" role="alert" invisible="not requires_approval">
+                    <strong>Note:</strong> Since work has already started, this cancellation will require approval from the request owner.
+                </div>
+                <group>
+                    <field name="request_id" invisible="1"/>
+                    <field name="requires_approval" invisible="1"/>
+                    <field name="cancel_reason" placeholder="Explain why this request is being cancelled..."/>
+                </group>
+                <footer>
+                    <button string="Confirm Cancellation" name="action_confirm_cancel" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

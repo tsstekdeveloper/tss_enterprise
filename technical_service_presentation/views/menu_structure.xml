@@ -25,13 +25,6 @@
                   action="technical_service.action_technical_service_dashboard"
                   sequence="10"/>
 
-        <menuitem id="menu_dashboard_team"
-                  name="Ekip Dashboard'i"
-                  parent="menu_dashboard"
-                  action="technical_service.action_technical_service_team_dashboard"
-                  groups="hr.group_hr_manager,technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader"
-                  sequence="20"/>
-
         <menuitem id="menu_dashboard_management"
                   name="Yonetim Dashboard'i"
                   parent="menu_dashboard"
@@ -63,32 +56,36 @@
                   sequence="20"/>
 
         <menuitem id="menu_request_team"
-                  name="Departman Talepleri"
+                  name="Departman Talepleri (HR)"
                   parent="menu_service_requests"
                   action="technical_service.action_maintenance_request_team"
-                  groups="hr.group_hr_manager,technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader"
                   sequence="30"/>
 
-        <menuitem id="menu_request_assigned"
-                  name="Atanmis Talepler"
+        <!-- Team Requests - For technicians (user's team) -->
+        <menuitem id="menu_request_team_requests"
+                  name="Takım Talepleri"
                   parent="menu_service_requests"
-                  action="technical_service.action_maintenance_request_assigned"
-                  groups="technical_service_presentation.group_technical_technician,technical_service_presentation.group_technical_senior_technician,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_cto"
-                  sequence="40"/>
+                  action="technical_service.action_maintenance_request_team_requests"
+                  groups="technical_service_presentation.group_technical_technician,technical_service_presentation.group_technical_senior_technician,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_department_manager"
+                  sequence="35"/>
 
-        <menuitem id="menu_request_assigned_to_me"
-                  name="Bana Atanmis Talepler"
+        <!-- Team Requests - For CTO (all teams) -->
+        <menuitem id="menu_request_team_requests_cto"
+                  name="Takım Talepleri"
                   parent="menu_service_requests"
-                  action="technical_service.action_maintenance_request_assigned_to_me"
-                  groups="technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_senior_technician,technical_service_presentation.group_technical_technician,technical_service_presentation.group_technical_dispatcher"
-                  sequence="43"/>
+                  action="technical_service.action_maintenance_request_team_requests_cto"
+                  groups="technical_service_presentation.group_technical_cto"
+                  sequence="36"/>
 
+        <!-- Pending Requests - For technicians (user's team) -->
         <menuitem id="menu_request_pending"
                   name="Bekleyen Talepler"
                   parent="menu_service_requests"
                   action="technical_service.action_maintenance_request_pending"
-                  groups="technical_service_presentation.group_technical_cto,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_dispatcher"
+                  groups="technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_dispatcher"
                   sequence="45"/>
+
+        <!-- CTO can use "Tum Talepler" and filter for pending requests -->
 
         <!-- CTO needs access to all requests -->
         <menuitem id="menu_request_all"

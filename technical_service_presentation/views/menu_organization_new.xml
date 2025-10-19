@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ============================================ -->
+        <!-- TASK 06: NEW ORGANIZATION & TEAMS MENU       -->
+        <!-- Date: 17 October 2024                       -->
+        <!-- Replaces: menu_team_management +             -->
+        <!--           menu_technical_organization        -->
+        <!-- ============================================ -->
+
+        <!-- Hide Old Menus -->
+        <record id="menu_team_management" model="ir.ui.menu">
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="menu_technical_organization" model="ir.ui.menu">
+            <field name="active" eval="False"/>
+        </record>
+
+        <!-- New Combined Menu -->
+        <menuitem id="menu_organization_teams"
+                  name="Organizasyon &amp; Ekipler"
+                  parent="menu_technical_service_root"
+                  groups="technical_service_presentation.group_technical_team_leader,technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_cto"
+                  sequence="55"/>
+
+        <!-- 1. Hierarchy View -->
+        <menuitem id="menu_org_hierarchy"
+                  name="Organizasyon Hiyerarşisi"
+                  parent="menu_organization_teams"
+                  action="technical_service.action_team_hierarchy"
+                  groups="technical_service_presentation.group_technical_department_manager,technical_service_presentation.group_technical_cto"
+                  sequence="10"/>
+
+        <!-- 2. Teams -->
+        <menuitem id="menu_org_teams"
+                  name="Ekipler"
+                  parent="menu_organization_teams"
+                  action="technical_service.action_technical_service_team"
+                  sequence="20"/>
+
+
+        <menuitem id="menu_org_security_groups"
+                  name="Rol Tabanlı Gruplar"
+                  parent="menu_organization_teams"
+                  action="technical_service.action_tss_role_management"
+                  groups="technical_service_presentation.group_technical_cto"
+                  sequence="10"/>
+
+        <!-- 4. Team Members -->
+        <menuitem id="menu_org_team_members"
+                  name="Ekip Üyeleri"
+                  parent="menu_organization_teams"
+                  action="technical_service.action_team_member"
+                  sequence="40"/>
+
+        <!-- 5. Team Performance -->
+        <menuitem id="menu_org_team_performance"
+                  name="Ekip Performansı"
+                  parent="menu_organization_teams"
+                  action="technical_service.action_team_performance"
+                  sequence="50"/>
+
+    </data>
+</odoo>
